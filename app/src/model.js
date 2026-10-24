@@ -1,20 +1,23 @@
 import {parts,byId,groups} from './catalog.js';
-export const VERSION=1;
+export const VERSION=2;
+const overlayKinds=['pcb','backplate','heatsink','fan','pad','paste','cable','standoff','screw','bracket'];
+const edgeKinds=['power','backplate','bracket','cable','standoff','screw'];
 export function createProject(){return {version:VERSION,name:'My first graphics card',mode:'guided',placements:[],answers:{}};}
 export const installed=(project,id)=>project.placements.some(p=>p.id===id);
 export function missing(project,id){return byId[id].requires.filter(req=>!installed(project,req));}
 export function nextPart(project){return parts.find(p=>!installed(project,p.id))||null;}
-export function currentLesson(project){return nextPart(project)?.lesson??15;}
+export function currentLesson(project){return nextPart(project)?.lesson??groups.length-1;}
 export function memoryStats(project){const count=project.placements.filter(p=>byId[p.id].kind==='memory').length;return {count,capacity:count*2,bits:count*32,bandwidth:count*32*16/8};}
 function bounds(p){const def=byId[p.id];const rotated=p.rotation%180!==0;return {x:p.x,y:p.y,w:rotated?def.h:def.w,h:rotated?def.w:def.h};}
 export function placementProblem(project,placement,ignoreId=null){
  const def=byId[placement.id];if(!def)return 'Unknown component.';
  if(!Number.isFinite(placement.x)||!Number.isFinite(placement.y)||![0,90,180,270].includes(placement.rotation))return 'Invalid placement.';
  if(def.kind==='pcb')return placement.x===500&&placement.y===270&&placement.rotation===0?null:'The board is the fixed mechanical reference.';
- const b=bounds(placement),edge=def.category==='Interfaces'||def.kind==='power';
+ if(def.kind==='backplate')return placement.x===500&&placement.y===270&&placement.rotation===0?null:'The backplate follows the board outline.';
+ const b=bounds(placement),edge=def.category==='Interfaces'||edgeKinds.includes(def.kind);
  if(b.x-b.w/2<(edge?50:112)||b.x+b.w/2>950||b.y-b.h/2<90||b.y+b.h/2>(def.kind==='pcie'?469:445))return 'Keep the component inside the board envelope.';
- if(['heatsink','fan'].includes(def.kind))return null;
- for(const other of project.placements){if(other.id===ignoreId||other.id===placement.id||['pcb','heatsink','fan'].includes(byId[other.id].kind))continue;
+ if(overlayKinds.includes(def.kind))return null;
+ for(const other of project.placements){if(other.id===ignoreId||other.id===placement.id||overlayKinds.includes(byId[other.id].kind))continue;
   const a=bounds(other);if(Math.abs(a.x-b.x)<(a.w+b.w)/2+3&&Math.abs(a.y-b.y)<(a.h+b.h)/2+3)return 'This overlaps '+other.id+'. Leave space between packages.';
  }
  return null;
@@ -48,11 +51,34 @@ export function checks(project){
   {label:'Component dependencies',ok:dependencyErrors.length===0&&count>0,detail:dependencyErrors.length?'Some prerequisites are missing.':count?'All installed parts have their modeled prerequisites.':'No components placed yet.'},
   {label:'Placement envelopes',ok:invalid.length===0&&count>0,detail:invalid.length?'Review '+invalid.map(p=>p.id).join(', ')+'.':count?'No modeled package overlaps or boundary errors.':'Place components to check their envelopes.'},
   {label:'Local memory interface',ok:memory.count===4,detail:`${memory.count}/4 packages · ${memory.bits}-bit modeled bus · ${memory.capacity} GB.`},
-  {label:'Cooling assembly',ok:installed(project,'HS1')&&installed(project,'FAN1'),detail:installed(project,'FAN1')?'Heatsink and fan are installed.':'Install the heatsink and fan after their prerequisites.'},
+  {label:'Thermal interface',ok:['TP1','TP2','TP3','TP4','TP5','TIM1'].every(id=>installed(project,id)),detail:['TP1','TP2','TP3','TP4','TP5','TIM1'].every(id=>installed(project,id))?'Pads cover the memory and power stages; paste covers the die.':'Fit the thermal pads and paste before the heatsink.'},
+  {label:'Cooling stack',ok:['HS1','FAN1','FAN2','FAN3'].every(id=>installed(project,id)),detail:['FAN1','FAN2','FAN3'].every(id=>installed(project,id))?'Heatsink and three fans are installed.':'Install the heatsink and all three fans after their prerequisites.'},
   {label:'Assembly completeness',ok:complete,detail:`${count}/${parts.length} assemblies placed. These checks are educational.`}
  ];
 }
+const LEGACY_LESSON_MAP={14:17,15:18};
+function upgradeLegacy(input){
+ if(!input||typeof input!=='object'||input.version!==1)return input;
+ const stored=Array.isArray(input.placements)?input.placements.filter(value=>value&&byId[value.id]):[];
+ const project=createProject();
+ if(typeof input.name==='string')project.name=input.name;
+ if(input.mode==='guided'||input.mode==='explore')project.mode=input.mode;
+ for(const def of parts){
+  const old=stored.find(value=>value.id===def.id);if(!old||missing(project,def.id).length)continue;
+  const placement={id:def.id,x:old.x,y:old.y,rotation:old.rotation};
+  if(!Number.isFinite(placement.x)||!Number.isFinite(placement.y)||![0,90,180,270].includes(placement.rotation))continue;
+  if(placementProblem(project,placement))continue;
+  project.placements.push(placement);
+ }
+ const answers={};
+ for(const [key,value] of Object.entries(input.answers||{})){
+  const index=LEGACY_LESSON_MAP[key]??Number(key);const group=groups[index];
+  if(group&&Number.isInteger(value)&&value>=0&&value<group.quiz.answers.length&&group.parts.every(p=>installed(project,p.id)))answers[index]=value;
+ }
+ return {...input,version:VERSION,placements:project.placements,answers};
+}
 export function validateProject(input){
+ input=upgradeLegacy(input);
  if(!input||typeof input!=='object'||Array.isArray(input)||input.version!==VERSION)throw new Error('This is not a supported GPU Builder project.');
  if(typeof input.name!=='string'||input.name.length<1||input.name.length>80)throw new Error('Project name must be 1–80 characters.');
  if(!['guided','explore'].includes(input.mode)||!Array.isArray(input.placements)||input.placements.length>parts.length)throw new Error('Invalid project structure.');
@@ -73,5 +99,5 @@ export function validateProject(input){
 }
 export function bomCsv(project){
  const escape=value=>'"'+String(value).replaceAll('"','""')+'"';
- return [['Reference','Component','Category','Quantity','Status'],...parts.map(p=>[p.id,p.name,p.category,p.id==='C3–C10'?8:1,installed(project,p.id)?'Placed':'Not placed'])].map(row=>row.map(escape).join(',')).join('\r\n');
+ return [['Reference','Component','Category','Quantity','Status'],...parts.map(p=>[p.id,p.name,p.category,p.qty,installed(project,p.id)?'Placed':'Not placed'])].map(row=>row.map(escape).join(',')).join('\r\n');
 }
