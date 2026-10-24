@@ -27,5 +27,12 @@ assert(metrics.projectBar <= 84, 'Phone project bar is 84px or shorter', metrics
 assert(metrics.docHeight <= 2700, 'Empty-board page fits in 2700px of scroll', metrics.docHeight + 'px');
 assert(metrics.overflowX === 0, 'No horizontal overflow at 390px', metrics.overflowX + 'px');
 assert(metrics.minTarget >= 44, 'Touch targets stay at least 44px', metrics.minTarget + 'px');
+await evaluate(`window.scrollTo(0, 900)`);
+await wait(120);
+const stuck = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const r = document.querySelector('.canvas-frame').getBoundingClientRect();
+  return {top: Math.round(r.top), scrollY: Math.round(window.scrollY)};
+})())`));
+assert(stuck.scrollY > 600 && stuck.top >= 0 && stuck.top <= 24, 'Board stays pinned while the guide scrolls', `top ${stuck.top}px at ${stuck.scrollY}px`);
 b.close();
 process.exit(failed ? 1 : 0);
