@@ -1,5 +1,9 @@
 # Change log
 
+## Phase 2 custom builder — October 24, 2026
+
+Added a custom builder that lives separately from the teaching workbench. It asks for a VRAM target (24–512 GB) and a package size (8, 16 or 32 GB), computes the memory packages required, groups them into banks of eight with `M1…Mn` designators, and lets the learner place a bank, a single package, or fill every bank. State persists under its own key so a custom build never touches the lesson project. Captures and verification in [[Testing]].
+
 ## Phase 1 redesign — October 24, 2026
 
 Opened the workbench with a photo-led intro: four original generated photographs of a three-fan flagship card, its heatsink and heatpipes, a card being seated on a bench, and a top-down PCB. Added a visible sixteen-step build path under the board so every connection is reachable in one click, and re-budgeted the phone page for the new landing. Verification recorded in [[Testing]]. Planned next phases: a separate custom builder with a VRAM target, a complete sellable parts set (fans, mounting, cabling, thermal), and a printable build guide.

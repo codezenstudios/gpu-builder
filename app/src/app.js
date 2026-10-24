@@ -1,6 +1,7 @@
 import {parts,byId,groups,categories,sources} from './catalog.js';
 import {createProject,installed,missing,nextPart,currentLesson,memoryStats,place,move,remove,checks,validateProject,bomCsv} from './model.js';
 import {boardSvg,architectureSvg,architectureBlocks,escape as esc,icon} from './render.js';
+import {CAPACITIES,MODULE_SIZES,bankLayout,createCustom,customStats,placeAllBanks,placeBank,placeChip,setTarget,validateCustom} from './custom.js';
 const $=selector=>document.querySelector(selector);
 const storageKey='gpu-builder.project.v1';
 let project=createProject(),loadWarning='',storageAvailable=true;
@@ -130,5 +131,42 @@ document.querySelectorAll('.close-dialog').forEach(button=>button.addEventListen
 $('#confirm-reset').addEventListener('click',()=>{$('#reset-dialog').close();selected='PCB1';lessonIndex=0;view='board';zoom=1;pan={x:0,y:0};commit(createProject(),'New project started. Undo can restore the previous workspace.');});
 document.addEventListener('keydown',event=>{if(event.target.closest('input,textarea,select')||document.querySelector('dialog[open]'))return;if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?redo():undo();}if(event.key==='Escape'){selected=null;renderCanvas();}});
 render();if(loadWarning)toast(loadWarning);else if(!storageAvailable)toast('Export your work to keep a copy.');
+const customKey='gpu-builder.custom.v1';
+let custom=createCustom();
+try{const raw=localStorage.getItem(customKey);if(raw)custom=validateCustom(JSON.parse(raw));}catch{}
+function saveCustom(){try{localStorage.setItem(customKey,JSON.stringify(custom));}catch{toast('Custom build could not be saved in this browser.');}}
+$('#custom-capacity').innerHTML=CAPACITIES.map(v=>`<option value="${v}">${v} GB</option>`).join('');
+$('#custom-module').innerHTML=MODULE_SIZES.map(v=>`<option value="${v}">${v} GB package</option>`).join('');
+function renderCustom(){
+ $('#custom-capacity').value=String(custom.capacityGB);$('#custom-module').value=String(custom.moduleGB);
+ const s=customStats(custom),banks=bankLayout(custom.chips),placed=new Set(custom.placed);
+ $('#custom-summary').textContent=`${s.total} × ${custom.moduleGB} GB packages · ${s.banks} bank${s.banks===1?'':'s'} · ${s.busBits}-bit interface · ${s.placedCapacityGB} of ${s.capacityGB} GB placed`;
+ $('#custom-place-bank').disabled=s.complete;
+ $('#custom-board').innerHTML=`<article class="custom-die"><span class="die-label">GPU PACKAGE</span><strong>U1</strong><small>${s.capacityGB} GB target · ${s.busBits}-bit</small></article>`+banks.map((bank,i)=>{
+ const count=bank.ids.filter(id=>placed.has(id)).length,done=count===bank.ids.length;
+ return `<article class="custom-bank ${done?'done':''}"><header><span>BANK ${String(i+1).padStart(2,'0')}</span><span>${count}/${bank.ids.length}</span></header><div class="chip-grid">${bank.ids.map(id=>`<button type="button" class="chip ${placed.has(id)?'placed':''}" data-chip="${id}" aria-pressed="${placed.has(id)}" aria-label="Place memory package ${id}">${id}</button>`).join('')}</div><button class="button button-small" type="button" data-bank="${i}" ${done?'disabled':''}>${done?'Bank placed':'Place bank '+String(i+1).padStart(2,'0')}</button></article>`;
+ }).join('');
+}
+function showScreen(name){
+ const customOn=name==='custom';
+ $('#workspace').hidden=customOn;$('#custom-view').hidden=!customOn;
+ if(customOn)renderCustom();
+ history.replaceState(null,'',customOn?'#custom':'#workspace');
+ window.scrollTo(0,0);
+}
+function changeTarget(patch){
+ try{custom=setTarget(custom,{capacityGB:Number($('#custom-capacity').value),moduleGB:Number($('#custom-module').value),...patch});saveCustom();renderCustom();}
+ catch(error){toast(error.message);renderCustom();}
+}
+$('#custom-capacity').addEventListener('change',()=>changeTarget({}));
+$('#custom-module').addEventListener('change',()=>changeTarget({}));
+$('#custom-place-bank').addEventListener('click',()=>{const next=bankLayout(custom.chips).findIndex(bank=>!bank.ids.every(id=>custom.placed.includes(id)));if(next<0)return;custom=placeBank(custom,next);saveCustom();renderCustom();});
+$('#custom-place-all').addEventListener('click',()=>{custom=placeAllBanks(custom);saveCustom();renderCustom();toast('Every memory bank is placed.');});
+$('#custom-reset').addEventListener('click',()=>{custom=createCustom({capacityGB:custom.capacityGB,moduleGB:custom.moduleGB,name:custom.name});saveCustom();renderCustom();toast('Custom build reset.');});
+$('#custom-board').addEventListener('click',event=>{const chip=event.target.closest('[data-chip]'),bank=event.target.closest('[data-bank]');if(chip){custom=placeChip(custom,chip.dataset.chip);saveCustom();renderCustom();}else if(bank){custom=placeBank(custom,Number(bank.dataset.bank));saveCustom();renderCustom();}});
+$('#custom-build-teaser').addEventListener('click',event=>{event.preventDefault();showScreen('custom');});
+$('#custom-back').addEventListener('click',event=>{event.preventDefault();showScreen('learn');});
+addEventListener('hashchange',()=>showScreen(location.hash==='#custom'?'custom':'learn'));
+if(location.hash==='#custom')showScreen('custom');
 // Expose a read-only snapshot for local QA and learner debugging, never mutation hooks.
 Object.defineProperty(window,'gpuBuilderProject',{get:()=>structuredClone(project)});

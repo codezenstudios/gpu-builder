@@ -38,6 +38,14 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Phase 2 custom builder — October 24, 2026
+
+Model coverage (`tests/custom.test.mjs`, eight tests): chip counts across every supported target including 512 GB at 8 GB (64 packages) and 32 GB (16 packages), rejection of unsupported capacities, module sizes and uneven divisions, banks of eight with stable `M1…Mn` designators, bank and single-package placement, refusal of duplicate or out-of-range packages, target reductions dropping orphaned packages, and import validation.
+
+Browser coverage (`tests/custom-browser.mjs`, ten assertions, CDP on 9228): the custom builder opens as an area separate from the teaching workbench; the default 24 GB target renders three 8 GB packages in one bank; switching to 512 GB with 32 GB packages renders sixteen chips in two banks and reports a 512-bit interface; placing one bank adds eight chips; filling the banks reaches 512 of 512 GB; the build survives a reload through `gpu-builder.custom.v1`; a single package can be placed by hand; no horizontal overflow at 390 px; and Back returns to the lessons. `npm test` now runs 14 model tests, all passing, alongside the home, layout and full browser sweep suites.
+
+Captures: `QA/phase2-custom-phone.png` and `QA/phase2-custom-desktop.png`.
+
 ## Phase 1 redesign — October 24, 2026
 
 `app/tests/home.mjs` opens the landing at 390 × 844 and 1440 × 900: the intro renders above the workbench, four original GPU photographs load from `/assets/gpu/`, the gallery is two-up on a phone and four-up on desktop, and it adds no horizontal overflow at either width. The build path renders all sixteen lessons, marks exactly one `aria-current="step"`, and clicking step 9 opens “Build the local memory interface”.
