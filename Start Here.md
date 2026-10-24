@@ -5,7 +5,7 @@ Open [[Design Plan]] for the planned interaction and teaching scope. Application
 Run with Node.js 24+:
 
 ```bash
-cd '/home/earth/Work/GPU Builder/app'
+cd app
 npm start
 ```
 
