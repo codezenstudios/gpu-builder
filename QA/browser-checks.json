@@ -1,0 +1,514 @@
+{
+  "checks": [
+    {
+      "label": "Empty board begins the learning sequence",
+      "passed": true
+    },
+    {
+      "label": "GPU placement is blocked before its power prerequisites",
+      "passed": true
+    },
+    {
+      "label": "Place PCB1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 1",
+      "passed": true
+    },
+    {
+      "label": "Place J1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 2",
+      "passed": true
+    },
+    {
+      "label": "Place J2",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 3",
+      "passed": true
+    },
+    {
+      "label": "Place U6",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 4",
+      "passed": true
+    },
+    {
+      "label": "Place U8",
+      "passed": true
+    },
+    {
+      "label": "Place U9",
+      "passed": true
+    },
+    {
+      "label": "Place U10",
+      "passed": true
+    },
+    {
+      "label": "Place U11",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 5",
+      "passed": true
+    },
+    {
+      "label": "Place L1",
+      "passed": true
+    },
+    {
+      "label": "Place L2",
+      "passed": true
+    },
+    {
+      "label": "Place L3",
+      "passed": true
+    },
+    {
+      "label": "Place L4",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 6",
+      "passed": true
+    },
+    {
+      "label": "Place C1",
+      "passed": true
+    },
+    {
+      "label": "Place C2",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 7",
+      "passed": true
+    },
+    {
+      "label": "Place U1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 8",
+      "passed": true
+    },
+    {
+      "label": "Place U2",
+      "passed": true
+    },
+    {
+      "label": "Place U3",
+      "passed": true
+    },
+    {
+      "label": "Place U4",
+      "passed": true
+    },
+    {
+      "label": "Place U5",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 9",
+      "passed": true
+    },
+    {
+      "label": "Place U7",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 10",
+      "passed": true
+    },
+    {
+      "label": "Place Y1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 11",
+      "passed": true
+    },
+    {
+      "label": "Place C3–C10",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 12",
+      "passed": true
+    },
+    {
+      "label": "Place J3",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 13",
+      "passed": true
+    },
+    {
+      "label": "Place J4",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 14",
+      "passed": true
+    },
+    {
+      "label": "Place HS1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 15",
+      "passed": true
+    },
+    {
+      "label": "Place FAN1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 16",
+      "passed": true
+    },
+    {
+      "label": "Complete 26-assembly build",
+      "passed": true
+    },
+    {
+      "label": "All six modeled checks pass",
+      "passed": true
+    },
+    {
+      "label": "BOM contains all placed references",
+      "passed": true
+    },
+    {
+      "label": "Power overlay appears",
+      "passed": true
+    },
+    {
+      "label": "Data overlay appears",
+      "passed": true
+    },
+    {
+      "label": "Architecture blocks explain cache behavior",
+      "passed": true
+    },
+    {
+      "label": "Keyboard-accessible component movement",
+      "passed": true
+    },
+    {
+      "label": "Rotate a selected component",
+      "passed": true
+    },
+    {
+      "label": "Undo restores rotation",
+      "passed": true
+    },
+    {
+      "label": "Redo restores rotation",
+      "passed": true
+    },
+    {
+      "label": "Remove selected component",
+      "passed": true
+    },
+    {
+      "label": "Reload restores browser-local project",
+      "passed": true
+    },
+    {
+      "label": "Help dialog opens",
+      "passed": true
+    },
+    {
+      "label": "Reset requires confirmation",
+      "passed": true
+    },
+    {
+      "label": "Cancel reset preserves the build",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 320×568",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 360×640",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 390×844",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 430×932",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 768×1024",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 820×1180",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 1024×768",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 1280×800",
+      "passed": true
+    },
+    {
+      "label": "Layout fits 1440×1100",
+      "passed": true
+    }
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "height": 568,
+      "page": 320,
+      "canvas": {
+        "x": 11,
+        "y": 254,
+        "width": 298,
+        "height": 290,
+        "top": 254,
+        "right": 309,
+        "bottom": 544,
+        "left": 11
+      },
+      "guide": {
+        "x": 11,
+        "y": 935.671875,
+        "width": 298,
+        "height": 1474.03125,
+        "top": 935.671875,
+        "right": 309,
+        "bottom": 2409.703125,
+        "left": 11
+      },
+      "broken": 0
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "page": 360,
+      "canvas": {
+        "x": 11,
+        "y": 254,
+        "width": 338,
+        "height": 290,
+        "top": 254,
+        "right": 349,
+        "bottom": 544,
+        "left": 11
+      },
+      "guide": {
+        "x": 11,
+        "y": 912,
+        "width": 338,
+        "height": 1427.25,
+        "top": 912,
+        "right": 349,
+        "bottom": 2339.25,
+        "left": 11
+      },
+      "broken": 0
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "page": 390,
+      "canvas": {
+        "x": 11,
+        "y": 254,
+        "width": 368,
+        "height": 290,
+        "top": 254,
+        "right": 379,
+        "bottom": 544,
+        "left": 11
+      },
+      "guide": {
+        "x": 11,
+        "y": 911,
+        "width": 368,
+        "height": 1368.59375,
+        "top": 911,
+        "right": 379,
+        "bottom": 2279.59375,
+        "left": 11
+      },
+      "broken": 0
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "page": 430,
+      "canvas": {
+        "x": 11,
+        "y": 254,
+        "width": 408,
+        "height": 290,
+        "top": 254,
+        "right": 419,
+        "bottom": 544,
+        "left": 11
+      },
+      "guide": {
+        "x": 11,
+        "y": 863,
+        "width": 408,
+        "height": 1356.21875,
+        "top": 863,
+        "right": 419,
+        "bottom": 2219.21875,
+        "left": 11
+      },
+      "broken": 0
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "page": 768,
+      "canvas": {
+        "x": 231,
+        "y": 261,
+        "width": 516,
+        "height": 390,
+        "top": 261,
+        "right": 747,
+        "bottom": 651,
+        "left": 231
+      },
+      "guide": {
+        "x": 21,
+        "y": 1049,
+        "width": 726,
+        "height": 932.765625,
+        "top": 1049,
+        "right": 747,
+        "bottom": 1981.765625,
+        "left": 21
+      },
+      "broken": 0
+    },
+    {
+      "width": 820,
+      "height": 1180,
+      "page": 820,
+      "canvas": {
+        "x": 231,
+        "y": 261,
+        "width": 568,
+        "height": 390,
+        "top": 261,
+        "right": 799,
+        "bottom": 651,
+        "left": 231
+      },
+      "guide": {
+        "x": 21,
+        "y": 1049,
+        "width": 778,
+        "height": 892.578125,
+        "top": 1049,
+        "right": 799,
+        "bottom": 1941.578125,
+        "left": 21
+      },
+      "broken": 0
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "page": 1024,
+      "canvas": {
+        "x": 231,
+        "y": 261,
+        "width": 772,
+        "height": 390,
+        "top": 261,
+        "right": 1003,
+        "bottom": 651,
+        "left": 231
+      },
+      "guide": {
+        "x": 21,
+        "y": 1049,
+        "width": 982,
+        "height": 851.703125,
+        "top": 1049,
+        "right": 1003,
+        "bottom": 1900.703125,
+        "left": 21
+      },
+      "broken": 0
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "page": 1265,
+      "canvas": {
+        "x": 221,
+        "y": 261,
+        "width": 753,
+        "height": 409.59375,
+        "top": 261,
+        "right": 974,
+        "bottom": 670.59375,
+        "left": 221
+      },
+      "guide": {
+        "x": 974,
+        "y": 199,
+        "width": 270,
+        "height": 1000,
+        "top": 199,
+        "right": 1244,
+        "bottom": 1199,
+        "left": 974
+      },
+      "broken": 0
+    },
+    {
+      "width": 1440,
+      "height": 1100,
+      "page": 1425,
+      "canvas": {
+        "x": 257,
+        "y": 261,
+        "width": 833,
+        "height": 460.796875,
+        "top": 261,
+        "right": 1090,
+        "bottom": 721.796875,
+        "left": 257
+      },
+      "guide": {
+        "x": 1090,
+        "y": 199,
+        "width": 302,
+        "height": 1000,
+        "top": 199,
+        "right": 1392,
+        "bottom": 1199,
+        "left": 1090
+      },
+      "broken": 0
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

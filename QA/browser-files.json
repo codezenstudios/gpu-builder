@@ -1,0 +1,54 @@
+{
+  "checks": [
+    {
+      "label": "File tests use the completed isolated QA project",
+      "passed": true
+    },
+    {
+      "label": "Project export creates a JSON download",
+      "passed": true
+    },
+    {
+      "label": "Exported JSON validates and preserves components",
+      "passed": true
+    },
+    {
+      "label": "BOM CSV downloads with component identifiers",
+      "passed": true
+    },
+    {
+      "label": "Invalid import is rejected without replacing the workspace",
+      "passed": true
+    },
+    {
+      "label": "Valid JSON import restores the project",
+      "passed": true
+    },
+    {
+      "label": "Import is reversible with undo",
+      "passed": true
+    },
+    {
+      "label": "Confirmed reset clears the workspace",
+      "passed": true
+    },
+    {
+      "label": "Undo restores a reset workspace",
+      "passed": true
+    },
+    {
+      "label": "Library search finds a reference identifier",
+      "passed": true
+    },
+    {
+      "label": "Pointer drag moves an installed package",
+      "passed": true
+    },
+    {
+      "label": "Library drag and drop places the board",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "failed": []
+}
