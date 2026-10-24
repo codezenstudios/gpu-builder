@@ -38,6 +38,12 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Phase 1 redesign — October 24, 2026
+
+`app/tests/home.mjs` opens the landing at 390 × 844 and 1440 × 900: the intro renders above the workbench, four original GPU photographs load from `/assets/gpu/`, the gallery is two-up on a phone and four-up on desktop, and it adds no horizontal overflow at either width. The build path renders all sixteen lessons, marks exactly one `aria-current="step"`, and clicking step 9 opens “Build the local memory interface”.
+
+With the landing in place the empty-board phone page measures 3,275 px (budget 3,300, previously 2,676 before the gallery), header 58 px, project bar 83 px, smallest touch target 44 px. `browser-checks.mjs` still passes the full recorded sweep at 320–1440 px with no browser exceptions or failed resources, and the six model tests pass.
+
 ## Mobile compaction — October 24, 2026
 
 `app/tests/layout-mobile.mjs` pins the phone layout budgets at 390 × 844 with the empty board mounted, on the CDP session at port 9228:
