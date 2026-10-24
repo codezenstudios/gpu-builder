@@ -33,5 +33,15 @@ const desktop = JSON.parse(await evaluate(`JSON.stringify((() => {
 })())`));
 assert(desktop.fourUp, 'Desktop gallery is a four-up row');
 assert(desktop.overflowX === 0, 'Gallery adds no horizontal overflow at 1440px', desktop.overflowX + 'px');
+const path = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const steps = [...document.querySelectorAll('#build-path [data-step]')];
+  return {count: steps.length, current: document.querySelectorAll('#build-path [aria-current="step"]').length};
+})())`));
+assert(path.count === 16, 'Build path lists all sixteen steps', path.count + ' steps');
+assert(path.current === 1, 'Exactly one step is marked current', path.current + ' current');
+await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [data-step]'); if (steps[8]) steps[8].click(); })()`);
+await wait(180);
+const jumped = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);
+assert(jumped === 'Build the local memory interface.', 'Clicking a step opens that lesson', jumped);
 b.close();
 process.exit(failed ? 1 : 0);

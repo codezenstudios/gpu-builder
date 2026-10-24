@@ -54,9 +54,15 @@ function renderDock(){
  $('#dock-content').setAttribute('aria-labelledby','tab-'+dock);
  document.querySelectorAll('[data-tab]').forEach(el=>{el.classList.toggle('active',el.dataset.tab===dock);el.setAttribute('aria-selected',el.dataset.tab===dock);el.tabIndex=el.dataset.tab===dock?0:-1;});
 }
+function renderPath(){
+ const counts=groups.map(g=>g.parts.filter(p=>installed(project,p.id)).length);
+ $('#build-path').innerHTML=groups.map((g,i)=>`<button type="button" data-step="${i}" class="path-step ${i===lessonIndex?'active':''} ${counts[i]===g.parts.length?'done':''}" ${i===lessonIndex?'aria-current="step"':''}><span class="path-index">${String(i+1).padStart(2,'0')}</span><span class="path-label">${esc(g.short)}</span><span class="path-state">${counts[i]===g.parts.length?'✓':counts[i]+'/'+g.parts.length}</span></button>`).join('');
+ const rail=$('#build-path'),active=rail.querySelector('.path-step.active');
+ if(active&&rail.scrollWidth>rail.clientWidth)rail.scrollLeft=Math.max(0,active.offsetLeft-70);
+}
 function render(){
  $('#project-name').value=project.name;$('#mode-select').value=project.mode;$('#progress').max=parts.length;$('#progress').value=project.placements.length;$('#progress-label').textContent=project.placements.length+' of '+parts.length+' assemblies';$('#progress-percent').textContent=Math.round(project.placements.length/parts.length*100)+'%';$('#undo-button').disabled=!past.length;$('#redo-button').disabled=!future.length;
- renderLibrary();renderCanvas();renderGuide();renderDock();
+ renderLibrary();renderCanvas();renderPath();renderGuide();renderDock();
 }
 function chooseGroup(index){lessonIndex=index;selected=(groupNext(groups[index])||groups[index].parts[0]).id;render();}
 function placeCurrent(position){const pending=groupNext(groups[lessonIndex]);if(!pending)return toast('This step is already assembled.');try{
@@ -67,6 +73,7 @@ function placeCurrent(position){const pending=groupNext(groups[lessonIndex]);if(
 function selectPart(id){if(!byId[id])return;selected=id;lessonIndex=byId[id].lesson;render();}
 function download(text,type,extension){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;const name=project.name.replace(/[^a-z0-9 -]/gi,'').trim().replaceAll(' ','-').slice(0,60)||'gpu-project';a.download=name+'.'+extension;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 $('#part-search').addEventListener('input',renderLibrary);$('#category-select').addEventListener('change',renderLibrary);
+$('#build-path').addEventListener('click',event=>{const step=event.target.closest('[data-step]');if(step)chooseGroup(Number(step.dataset.step));});
 $('#part-list').addEventListener('click',event=>{const button=event.target.closest('[data-group]');if(button)chooseGroup(Number(button.dataset.group));});
 $('#part-list').addEventListener('dragstart',event=>{const button=event.target.closest('[data-group]');if(!button)return;chooseGroup(Number(button.dataset.group));const p=groupNext(groups[lessonIndex]);if(!p){event.preventDefault();return;}event.dataTransfer.setData('application/x-gpu-part',p.id);event.dataTransfer.effectAllowed='copy';});
 function point(event){const svg=$('#board-svg');if(!svg)return null;const p=new DOMPoint(event.clientX,event.clientY);return p.matrixTransform(svg.getScreenCTM().inverse());}
