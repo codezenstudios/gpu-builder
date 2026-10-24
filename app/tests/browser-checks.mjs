@@ -11,20 +11,20 @@ await click('[data-group="7"]');assert(await evaluate('document.querySelector("[
 for(const g of groups){
  for(const p of g.parts){await click('[data-action="place"]');assert(await evaluate(`gpuBuilderProject.placements.some(p=>p.id===${JSON.stringify(p.id)})`),'Place '+p.id);}
  await click('[data-answer="'+g.quiz.correct+'"]');assert(await evaluate(`gpuBuilderProject.answers[${g.index}]===${g.quiz.correct}`),'Knowledge check '+(g.index+1));
- if(g.index<15)await click('[data-action="next"]');
+ if(g.index<groups.length-1)await click('[data-action="next"]');
 }
-assert(await evaluate(`gpuBuilderProject.placements.length===${parts.length}`),'Complete 26-assembly build');await screenshot('desktop-complete.png');
-await click('[data-tab="checks"]');assert(await evaluate('document.querySelectorAll(".check-dot.pass").length===6'),'All six modeled checks pass');
-await click('[data-tab="bom"]');assert(await evaluate('document.querySelectorAll(".bom-table tr.placed").length===26'),'BOM contains all placed references');
+assert(await evaluate(`gpuBuilderProject.placements.length===${parts.length}`),'Complete '+parts.length+'-assembly build');await screenshot('desktop-complete.png');
+await click('[data-tab="checks"]');assert(await evaluate('document.querySelectorAll(".check-dot.pass").length===7'),'All seven modeled checks pass');
+await click('[data-tab="bom"]');assert(await evaluate(`document.querySelectorAll(".bom-table tr.placed").length===${parts.length}`),'BOM contains all placed references');
 await click('[data-overlay="power"]');assert(await evaluate('!!document.querySelector(".power-flow")'),'Power overlay appears');await click('[data-overlay="data"]');assert(await evaluate('!!document.querySelector(".data-flow")'),'Data overlay appears');
 await click('#die-view');await click('[data-arch="cache"]');assert(await evaluate('document.querySelector(".arch-info strong").textContent.includes("reused")'),'Architecture blocks explain cache behavior');await screenshot('architecture.png');await click('#board-view');
 await evaluate(`document.querySelector('#mode-select').value='explore';document.querySelector('#mode-select').dispatchEvent(new Event('change'))`);
 await click('[data-group="9"]');const before=await evaluate('gpuBuilderProject.placements.find(p=>p.id==="U7")');await click('[data-nudge-x="5"]');assert(await evaluate(`gpuBuilderProject.placements.find(p=>p.id==='U7').x===${before.x+5}`),'Keyboard-accessible component movement');await click('[data-action="rotate"]');assert(await evaluate('gpuBuilderProject.placements.find(p=>p.id==="U7").rotation===90'),'Rotate a selected component');
 await click('#undo-button');assert(await evaluate('gpuBuilderProject.placements.find(p=>p.id==="U7").rotation===0'),'Undo restores rotation');await click('#redo-button');assert(await evaluate('gpuBuilderProject.placements.find(p=>p.id==="U7").rotation===90'),'Redo restores rotation');
 await click('[data-action="remove"]');assert(await evaluate('!gpuBuilderProject.placements.some(p=>p.id==="U7")'),'Remove selected component');await click('#undo-button');
-await navigate();assert(await evaluate('gpuBuilderProject.placements.length===26&&gpuBuilderProject.mode==="explore"'),'Reload restores browser-local project');
+await navigate();assert(await evaluate(`gpuBuilderProject.placements.length===${parts.length}&&gpuBuilderProject.mode==="explore"`),'Reload restores browser-local project');
 await click('#help-button');assert(await evaluate('document.querySelector("#help-dialog").open'),'Help dialog opens');await click('#help-dialog .close-dialog');
-await click('#reset-button');assert(await evaluate('document.querySelector("#reset-dialog").open'),'Reset requires confirmation');await click('#reset-dialog .close-dialog');assert(await evaluate('gpuBuilderProject.placements.length===26'),'Cancel reset preserves the build');
+await click('#reset-button');assert(await evaluate('document.querySelector("#reset-dialog").open'),'Reset requires confirmation');await click('#reset-dialog .close-dialog');assert(await evaluate(`gpuBuilderProject.placements.length===${parts.length}`),'Cancel reset preserves the build');
 const layouts=[];
 for(const [width,height] of [[320,568],[360,640],[390,844],[430,932],[768,1024],[820,1180],[1024,768],[1280,800],[1440,1100]]){
  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<1100});await wait(100);

@@ -1,4 +1,5 @@
 import {connect, wait} from './browser.mjs';
+import {groups} from '../src/catalog.js';
 const b = await connect();
 const {send, evaluate, navigate} = b;
 let failed = 0;
@@ -37,11 +38,19 @@ const path = JSON.parse(await evaluate(`JSON.stringify((() => {
   const steps = [...document.querySelectorAll('#build-path [data-step]')];
   return {count: steps.length, current: document.querySelectorAll('#build-path [aria-current="step"]').length};
 })())`));
-assert(path.count === 16, 'Build path lists all sixteen steps', path.count + ' steps');
+assert(path.count === groups.length, 'Build path lists every lesson', path.count + ' steps');
 assert(path.current === 1, 'Exactly one step is marked current', path.current + ' current');
 await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [data-step]'); if (steps[8]) steps[8].click(); })()`);
 await wait(180);
 const jumped = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);
 assert(jumped === 'Build the local memory interface.', 'Clicking a step opens that lesson', jumped);
+await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [data-step]'); if (steps[14]) steps[14].click(); })()`);
+await wait(180);
+const mechanical = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);
+assert(mechanical === 'Mount the standoffs.', 'Later build steps open their lesson', mechanical);
+await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [data-step]'); if (steps[steps.length - 1]) steps[steps.length - 1].click(); })()`);
+await wait(180);
+const last = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);
+assert(last === 'Connect the power cable.', 'The final build step is reachable', last);
 b.close();
 process.exit(failed ? 1 : 0);

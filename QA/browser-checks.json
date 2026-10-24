@@ -161,7 +161,19 @@
       "passed": true
     },
     {
-      "label": "Place HS1",
+      "label": "Place H1",
+      "passed": true
+    },
+    {
+      "label": "Place H2",
+      "passed": true
+    },
+    {
+      "label": "Place H3",
+      "passed": true
+    },
+    {
+      "label": "Place H4",
       "passed": true
     },
     {
@@ -169,7 +181,23 @@
       "passed": true
     },
     {
-      "label": "Place FAN1",
+      "label": "Place TP1",
+      "passed": true
+    },
+    {
+      "label": "Place TP2",
+      "passed": true
+    },
+    {
+      "label": "Place TP3",
+      "passed": true
+    },
+    {
+      "label": "Place TP4",
+      "passed": true
+    },
+    {
+      "label": "Place TP5",
       "passed": true
     },
     {
@@ -177,11 +205,91 @@
       "passed": true
     },
     {
-      "label": "Complete 26-assembly build",
+      "label": "Place TIM1",
       "passed": true
     },
     {
-      "label": "All six modeled checks pass",
+      "label": "Knowledge check 17",
+      "passed": true
+    },
+    {
+      "label": "Place HS1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 18",
+      "passed": true
+    },
+    {
+      "label": "Place FAN1",
+      "passed": true
+    },
+    {
+      "label": "Place FAN2",
+      "passed": true
+    },
+    {
+      "label": "Place FAN3",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 19",
+      "passed": true
+    },
+    {
+      "label": "Place BP1",
+      "passed": true
+    },
+    {
+      "label": "Place H5",
+      "passed": true
+    },
+    {
+      "label": "Place H6",
+      "passed": true
+    },
+    {
+      "label": "Place H7",
+      "passed": true
+    },
+    {
+      "label": "Place H8",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 20",
+      "passed": true
+    },
+    {
+      "label": "Place BR1",
+      "passed": true
+    },
+    {
+      "label": "Place H9",
+      "passed": true
+    },
+    {
+      "label": "Place H10",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 21",
+      "passed": true
+    },
+    {
+      "label": "Place CB1",
+      "passed": true
+    },
+    {
+      "label": "Knowledge check 22",
+      "passed": true
+    },
+    {
+      "label": "Complete 47-assembly build",
+      "passed": true
+    },
+    {
+      "label": "All seven modeled checks pass",
       "passed": true
     },
     {
@@ -292,10 +400,10 @@
         "x": 11,
         "y": 1506.5,
         "width": 298,
-        "height": 1422.71875,
+        "height": 1401.0625,
         "top": 1506.5,
         "right": 309,
-        "bottom": 2929.21875,
+        "bottom": 2907.5625,
         "left": 11
       },
       "broken": 0
@@ -306,22 +414,22 @@
       "page": 360,
       "canvas": {
         "x": 11,
-        "y": 749.34375,
+        "y": 772.09375,
         "width": 338,
         "height": 290,
-        "top": 749.34375,
+        "top": 772.09375,
         "right": 349,
-        "bottom": 1039.34375,
+        "bottom": 1062.09375,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 1462.71875,
+        "y": 1485.46875,
         "width": 338,
-        "height": 1385.65625,
-        "top": 1462.71875,
+        "height": 1310.71875,
+        "top": 1485.46875,
         "right": 349,
-        "bottom": 2848.375,
+        "bottom": 2796.1875,
         "left": 11
       },
       "broken": 0
@@ -332,22 +440,22 @@
       "page": 390,
       "canvas": {
         "x": 11,
-        "y": 723.625,
+        "y": 746.375,
         "width": 368,
         "height": 290,
-        "top": 723.625,
+        "top": 746.375,
         "right": 379,
-        "bottom": 1013.625,
+        "bottom": 1036.375,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 1440,
+        "y": 1462.75,
         "width": 368,
-        "height": 1308.1875,
-        "top": 1440,
+        "height": 1264.4375,
+        "top": 1462.75,
         "right": 379,
-        "bottom": 2748.1875,
+        "bottom": 2727.1875,
         "left": 11
       },
       "broken": 0
@@ -370,10 +478,10 @@
         "x": 11,
         "y": 1412.390625,
         "width": 408,
-        "height": 1258.75,
+        "height": 1264.4375,
         "top": 1412.390625,
         "right": 419,
-        "bottom": 2671.140625,
+        "bottom": 2676.828125,
         "left": 11
       },
       "broken": 0
@@ -384,22 +492,22 @@
       "page": 768,
       "canvas": {
         "x": 231,
-        "y": 1055.65625,
+        "y": 1078.40625,
         "width": 516,
         "height": 390,
-        "top": 1055.65625,
+        "top": 1078.40625,
         "right": 747,
-        "bottom": 1445.65625,
+        "bottom": 1468.40625,
         "left": 231
       },
       "guide": {
         "x": 21,
-        "y": 1843.65625,
+        "y": 1866.40625,
         "width": 726,
-        "height": 932.765625,
-        "top": 1843.65625,
+        "height": 918.265625,
+        "top": 1866.40625,
         "right": 747,
-        "bottom": 2776.421875,
+        "bottom": 2784.671875,
         "left": 21
       },
       "broken": 0
@@ -410,22 +518,22 @@
       "page": 820,
       "canvas": {
         "x": 231,
-        "y": 1090.34375,
+        "y": 1113.09375,
         "width": 568,
         "height": 390,
-        "top": 1090.34375,
+        "top": 1113.09375,
         "right": 799,
-        "bottom": 1480.34375,
+        "bottom": 1503.09375,
         "left": 231
       },
       "guide": {
         "x": 21,
-        "y": 1878.34375,
+        "y": 1901.09375,
         "width": 778,
-        "height": 892.578125,
-        "top": 1878.34375,
+        "height": 918.265625,
+        "top": 1901.09375,
         "right": 799,
-        "bottom": 2770.921875,
+        "bottom": 2819.359375,
         "left": 21
       },
       "broken": 0
@@ -436,22 +544,22 @@
       "page": 1024,
       "canvas": {
         "x": 231,
-        "y": 741.84375,
+        "y": 766.34375,
         "width": 772,
         "height": 390,
-        "top": 741.84375,
+        "top": 766.34375,
         "right": 1003,
-        "bottom": 1131.84375,
+        "bottom": 1156.34375,
         "left": 231
       },
       "guide": {
         "x": 21,
-        "y": 1570.84375,
+        "y": 1645.34375,
         "width": 982,
-        "height": 851.703125,
-        "top": 1570.84375,
+        "height": 855.890625,
+        "top": 1645.34375,
         "right": 1003,
-        "bottom": 2422.546875,
+        "bottom": 2501.234375,
         "left": 21
       },
       "broken": 0
@@ -462,22 +570,22 @@
       "page": 1265,
       "canvas": {
         "x": 221,
-        "y": 782,
+        "y": 806.5,
         "width": 753,
         "height": 409.59375,
-        "top": 782,
+        "top": 806.5,
         "right": 974,
-        "bottom": 1191.59375,
+        "bottom": 1216.09375,
         "left": 221
       },
       "guide": {
         "x": 974,
-        "y": 720,
+        "y": 744.5,
         "width": 270,
         "height": 1000,
-        "top": 720,
+        "top": 744.5,
         "right": 1244,
-        "bottom": 1720,
+        "bottom": 1744.5,
         "left": 974
       },
       "broken": 0
@@ -488,22 +596,22 @@
       "page": 1425,
       "canvas": {
         "x": 257,
-        "y": 808.671875,
+        "y": 833.171875,
         "width": 833,
         "height": 460.796875,
-        "top": 808.671875,
+        "top": 833.171875,
         "right": 1090,
-        "bottom": 1269.46875,
+        "bottom": 1293.96875,
         "left": 257
       },
       "guide": {
         "x": 1090,
-        "y": 746.671875,
+        "y": 771.171875,
         "width": 302,
         "height": 1000,
-        "top": 746.671875,
+        "top": 771.171875,
         "right": 1392,
-        "bottom": 1746.671875,
+        "bottom": 1771.171875,
         "left": 1090
       },
       "broken": 0

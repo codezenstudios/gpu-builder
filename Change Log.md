@@ -1,5 +1,9 @@
 # Change log
 
+## Phase 3 full parts — October 24, 2026
+
+Made the teaching build a complete card instead of a board with a cooler on top. Appended eight lessons in real build order — corner standoffs, five thermal pads, thermal paste, heatsink, three cooler fans, backplate with four spring screws, PCIe bracket with two screws, and the auxiliary power cable — for 22 lessons and 47 assemblies. Each new part has a reference designator, a quiz, a category and its own board artwork; pads and paste draw under the heatsink, the backplate behind the PCB, and hardware above the stack. The BOM now reports catalog quantities. Projects saved in the old format upgrade on load, keeping every placement whose prerequisites still hold. Verification in [[Testing]].
+
 ## Phase 2 custom builder — October 24, 2026
 
 Added a custom builder that lives separately from the teaching workbench. It asks for a VRAM target (24–512 GB) and a package size (8, 16 or 32 GB), computes the memory packages required, groups them into banks of eight with `M1…Mn` designators, and lets the learner place a bank, a single package, or fill every bank. State persists under its own key so a custom build never touches the lesson project. Captures and verification in [[Testing]].

@@ -38,6 +38,16 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Phase 3 full parts — October 24, 2026
+
+Model coverage (`tests/model.test.mjs`, eight tests, 16 with the custom suite): 22 lessons and 47 assemblies in build order — standoffs, thermal pads, paste, heatsink, three fans, backplate, bracket and cable; new thermal and cooling checks; quantities from the catalog (decoupling bank 8, everything else 1) in the BOM CSV; a saved v1 project upgrading instead of throwing, keeping the 24 placements whose prerequisites still hold and dropping the old heatsink and fan.
+
+Browser coverage: `browser-checks.mjs` completes all 22 lessons through the UI at 1440 px (47 assemblies, seven passing checks, 47 BOM rows), then still passes the recorded sweep at 320–1440 px with no exceptions or failed resources. `home.mjs` finds 22 path steps, opens “Mount the standoffs” from step 15 and the final power-cable lesson from the last step. `browser-files.mjs` exports, imports, resets, drags and drag-drops against the 47-part build.
+
+Phone: page height with the empty board is now 3,520 px against a re-budgeted 3,800 px (was 3,300). The extra 245 px is six more lesson cards in the stacked phone library, not spacing; header 58 px, project bar 83 px, no horizontal overflow, touch targets 44 px, and the board still pins at the top of the viewport while the guide scrolls.
+
+Captures: `QA/phase3-complete.png`, `QA/phase3-phone.png` (thermal-pad lesson with the pinned board) and `QA/phase3-stack.png` (zoomed thermal interface and fans).
+
 ## Phase 2 custom builder — October 24, 2026
 
 Model coverage (`tests/custom.test.mjs`, eight tests): chip counts across every supported target including 512 GB at 8 GB (64 packages) and 32 GB (16 packages), rejection of unsupported capacities, module sizes and uneven divisions, banks of eight with stable `M1…Mn` designators, bank and single-package placement, refusal of duplicate or out-of-range packages, target reductions dropping orphaned packages, and import validation.
@@ -48,7 +58,7 @@ Captures: `QA/phase2-custom-phone.png` and `QA/phase2-custom-desktop.png`.
 
 ## Phase 1 redesign — October 24, 2026
 
-`app/tests/home.mjs` opens the landing at 390 × 844 and 1440 × 900: the intro renders above the workbench, four original GPU photographs load from `/assets/gpu/`, the gallery is two-up on a phone and four-up on desktop, and it adds no horizontal overflow at either width. The build path renders all sixteen lessons, marks exactly one `aria-current="step"`, and clicking step 9 opens “Build the local memory interface”.
+`app/tests/home.mjs` opens the landing at 390 × 844 and 1440 × 900: the intro renders above the workbench, four original GPU photographs load from `/assets/gpu/`, the gallery is two-up on a phone and four-up on desktop, and it adds no horizontal overflow at either width. The build path renders every lesson, marks exactly one `aria-current="step"`, and clicking step 9 opens “Build the local memory interface”. (The count is now 22; see Phase 3.)
 
 With the landing in place the empty-board phone page measures 3,275 px (budget 3,300, previously 2,676 before the gallery), header 58 px, project bar 83 px, smallest touch target 44 px. `browser-checks.mjs` still passes the full recorded sweep at 320–1440 px with no browser exceptions or failed resources, and the six model tests pass.
 

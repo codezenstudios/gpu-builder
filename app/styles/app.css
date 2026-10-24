@@ -10,3 +10,31 @@
 @media(max-width:380px){.header-actions .button-dark>span:last-child{font-size:0}.header-actions .button-dark>span:last-child:after{content:'Export';font-size:10px}.brand{font-size:19px}.brand small{font-size:5.5px}.part-list{grid-template-columns:1fr}.view-options{justify-content:flex-start;gap:5px 10px}.mode-select{margin-left:auto}.canvas-legend>span:last-child{display:none}.segmented button{font-size:9px;gap:5px;padding:6px}.metric strong{font-size:21px}.metric-label{font-size:6px}.save-state{font-size:8px}.project-progress{width:165px}.canvas-toolbar{padding:0 8px}.app-header{padding:0 13px}}
 @media(max-width:700px){.search-box input,.category-label select{font-size:16px}.mode-select select{font-size:16px;width:170px;max-width:170px;min-height:44px}.nudge-controls button{width:44px;min-height:44px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Full-assembly hardware: standoffs, thermal interface, backplate, bracket, cable */
+.standoff-washer{fill:#4f5b47;stroke:#9ba57f;stroke-width:.7}
+.standoff-ring{fill:#77826a;stroke:#cfd3b6;stroke-width:1}
+.standoff-bore{fill:#1c2924;stroke:#8d9878;stroke-width:1}
+.standoff-flats{stroke:#404d3c;stroke-width:1.4;fill:none}
+.thermal-pad{fill:#c98f5a;fill-opacity:.3;stroke:#e2ab7c;stroke-width:1;stroke-dasharray:4 3}
+.pad-cross{stroke:#e8b78d;stroke-width:.7;opacity:.45;fill:none}
+.pad-mark{font:7px var(--mono);fill:#f1c99f;text-anchor:middle;letter-spacing:.7px;pointer-events:none}
+.paste-layer{fill:#ded7c1;fill-opacity:.14;stroke:#cbbfa4;stroke-width:1;stroke-dasharray:3 3}
+.paste-hatch{stroke:#d9cdb0;stroke-width:.8;opacity:.32;fill:none}
+.backplate-panel{fill:#232a23;stroke:#6d785f;stroke-width:1.4}
+.backplate-rib{stroke:#3f4a3c;stroke-width:1}
+.backplate-mark{font:6.5px var(--mono);fill:#8b9779;letter-spacing:1.1px}
+.screw-washer{fill:#5d6753;fill-opacity:.75;stroke:#aeb597;stroke-width:.8}
+.screw-head{fill:#8f9882;stroke:#c6ccb1;stroke-width:.8}
+.screw-slot{stroke:#333d30;stroke-width:1.8;stroke-linecap:round}
+.bracket-plate{fill:#878f80;stroke:#c3c9b1;stroke-width:1}
+.bracket-tab{fill:#98a08b;stroke:#c3c9b1;stroke-width:1}
+.bracket-port{fill:#1c2924;stroke:#c7cdb6;stroke-width:.8}
+.bracket-hole{fill:#1c2924;stroke:#b9c1a5;stroke-width:.8}
+.bracket-mark{font:6.5px var(--mono);fill:#3c4536;text-anchor:middle;letter-spacing:1px}
+.cable-run{fill:none;stroke:#232b24;stroke-width:14;stroke-linecap:round}
+.cable-sleeve{fill:none;stroke:#5d6757;stroke-width:2.6;stroke-dasharray:6 4;opacity:.9}
+.cable-plug{fill:#262e26;stroke:#9dab8d;stroke-width:1.1}
+.hardware-label{font:7px var(--mono);fill:#c9d2b7;text-anchor:middle;letter-spacing:.6px}
+.part-pad,.part-paste,.part-backplate,.part-cable,.part-screw{pointer-events:none}
+.part-pad .part-hit,.part-paste .part-hit{stroke:none}
