@@ -1,5 +1,9 @@
 # Change log
 
+## Custom builder parts list — October 24, 2026
+
+The custom builder now exports its own printable document: a cover with the target, package size, package count and placed progress; the capacity maths derived from the two choices; a parts list covering the GPU package and every memory bank with quantity and what to buy; and a bank-by-bank placement plan with a check on each slice. “Parts list & guide” opens it, `#custom-guide` addresses it, printing from the custom screen prints it, and the saved PDF is named after the custom build. The teaching guide is untouched and still reachable from its own actions. Verification in [[Testing]].
+
 ## Phase 4 printable build guide — October 24, 2026
 
 Added a build-guide view, reachable from the landing actions, the footer and `#build-guide`, that prints or saves to PDF as an eleven-page A4 document: a cover with generation date, placement and quiz counts and safety notes; a sourcing table for all 47 references sorted into hardware, distributor, fabrication and integrated supply, each with what to buy; and 22 numbered steps carrying what the part does, where it goes, what to watch for, a self-check question with its answer and a reference. Printing from anywhere in the app prints the guide, and the document title follows the project so a saved PDF is named after the build. Verification in [[Testing]].

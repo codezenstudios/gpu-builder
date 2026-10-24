@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "label": "A 512 GB configuration is ready to export",
+      "passed": true
+    },
+    {
+      "label": "Custom guide opens from the custom builder",
+      "passed": true
+    },
+    {
+      "label": "Custom guide has its own hash",
+      "passed": true
+    },
+    {
+      "label": "Toolbar names the memory plan",
+      "passed": true
+    },
+    {
+      "label": "Eyebrow distinguishes the parts list",
+      "passed": true
+    },
+    {
+      "label": "Cover carries the custom build name",
+      "passed": true
+    },
+    {
+      "label": "Placement plan lists both banks",
+      "passed": true
+    },
+    {
+      "label": "Parts list covers the GPU and both memory banks",
+      "passed": true
+    },
+    {
+      "label": "Package references run across the banks",
+      "passed": true
+    },
+    {
+      "label": "Guide shows the derived capacity maths",
+      "passed": true
+    },
+    {
+      "label": "Custom guide fits a phone width without overflow",
+      "passed": true
+    },
+    {
+      "label": "Print title names the custom parts list",
+      "passed": true
+    },
+    {
+      "label": "Custom parts list prints as a multi-page PDF (3 pages, 156 KB)",
+      "passed": true
+    },
+    {
+      "label": "Back returns to the custom builder",
+      "passed": true
+    },
+    {
+      "label": "The teaching guide is unaffected by the custom document",
+      "passed": true
+    }
+  ],
+  "pages": 3,
+  "bytes": 159353,
+  "errors": [],
+  "failed": []
+}

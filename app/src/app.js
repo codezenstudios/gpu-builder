@@ -3,6 +3,7 @@ import {createProject,installed,missing,nextPart,currentLesson,memoryStats,place
 import {boardSvg,architectureSvg,architectureBlocks,escape as esc,icon} from './render.js';
 import {CAPACITIES,MODULE_SIZES,bankLayout,createCustom,customStats,placeAllBanks,placeBank,placeChip,setTarget,validateCustom} from './custom.js';
 import {buildGuide} from './guide.js';
+import {buildCustomGuide} from './customGuide.js';
 const $=selector=>document.querySelector(selector);
 const storageKey='gpu-builder.project.v1';
 let project=createProject(),loadWarning='',storageAvailable=true;
@@ -148,13 +149,22 @@ function renderCustom(){
  return `<article class="custom-bank ${done?'done':''}"><header><span>BANK ${String(i+1).padStart(2,'0')}</span><span>${count}/${bank.ids.length}</span></header><div class="chip-grid">${bank.ids.map(id=>`<button type="button" class="chip ${placed.has(id)?'placed':''}" data-chip="${id}" aria-pressed="${placed.has(id)}" aria-label="Place memory package ${id}">${id}</button>`).join('')}</div><button class="button button-small" type="button" data-bank="${i}" ${done?'disabled':''}>${done?'Bank placed':'Place bank '+String(i+1).padStart(2,'0')}</button></article>`;
  }).join('');
 }
-function renderBuildGuide(){$('#guide-document').innerHTML=buildGuide(project).html;}
-function showScreen(name){
+let guideContext='teach',guideReturn='learn';
+function renderBuildGuide(){
+ const customOn=guideContext==='custom';
+ $('#guide-eyebrow').textContent=customOn?'PARTS LIST':'BUILD GUIDE';
+ $('#guide-title').textContent=customOn?'Your memory plan, on paper':'Your assembly, on paper';
+ $('#guide-back').textContent=customOn?'Back to custom builder':'Back to workbench';
+ $('#guide-toolbar-note').textContent=customOn?'Everything below is the document that will be printed: the capacity maths, every memory package in its bank, and a bank-by-bank placement plan. Choose “Save as PDF” in your browser’s print dialog.':'Everything below is the document that will be printed: a cover, the sourcing list for every reference, and each build step with its own check question. Choose “Save as PDF” in your browser’s print dialog.';
+ $('#guide-document').innerHTML=customOn?buildCustomGuide(custom).html:buildGuide(project).html;
+}
+function showScreen(name,options={}){
  const customOn=name==='custom',guideOn=name==='guide';
+ if(guideOn){guideContext=options.context==='custom'?'custom':'teach';guideReturn=guideContext==='custom'?'custom':'learn';}
  $('#workspace').hidden=customOn||guideOn;$('#custom-view').hidden=!customOn;$('#guide-view').hidden=!guideOn;
  if(customOn)renderCustom();
  if(guideOn)renderBuildGuide();
- history.replaceState(null,'',guideOn?'#build-guide':customOn?'#custom':'#workspace');
+ history.replaceState(null,'',guideOn?(guideContext==='custom'?'#custom-guide':'#build-guide'):customOn?'#custom':'#workspace');
  window.scrollTo(0,0);
 }
 function changeTarget(patch){
@@ -169,18 +179,29 @@ $('#custom-reset').addEventListener('click',()=>{custom=createCustom({capacityGB
 $('#custom-board').addEventListener('click',event=>{const chip=event.target.closest('[data-chip]'),bank=event.target.closest('[data-bank]');if(chip){custom=placeChip(custom,chip.dataset.chip);saveCustom();renderCustom();}else if(bank){custom=placeBank(custom,Number(bank.dataset.bank));saveCustom();renderCustom();}});
 $('#custom-build-teaser').addEventListener('click',event=>{event.preventDefault();showScreen('custom');});
 $('#custom-back').addEventListener('click',event=>{event.preventDefault();showScreen('learn');});
-function screenForHash(){return location.hash==='#custom'?'custom':location.hash==='#build-guide'?'guide':'learn';}
+function openFromHash(){
+ if(location.hash==='#custom')showScreen('custom');
+ else if(location.hash==='#custom-guide')showScreen('guide',{context:'custom'});
+ else if(location.hash==='#build-guide')showScreen('guide');
+ else showScreen('learn');
+}
 $('#guide-button').addEventListener('click',()=>showScreen('guide'));
 $('#guide-footer-button').addEventListener('click',()=>showScreen('guide'));
-$('#guide-back').addEventListener('click',()=>showScreen('learn'));
+$('#guide-back').addEventListener('click',()=>showScreen(guideReturn));
+$('#custom-guide').addEventListener('click',()=>showScreen('guide',{context:'custom'}));
 let printTitle='';
-function preparePrint(){renderBuildGuide();if(!printTitle){printTitle=document.title;document.title=project.name+' — build guide';}}
+function preparePrint(){
+ if(!$('#custom-view').hidden)guideContext='custom';else if(!$('#workspace').hidden)guideContext='teach';
+ renderBuildGuide();
+ if(!printTitle){printTitle=document.title;document.title=guideContext==='custom'?custom.name+' — parts list':project.name+' — build guide';}
+}
 function restorePrintTitle(){if(printTitle){document.title=printTitle;printTitle='';}}
 $('#guide-print').addEventListener('click',()=>{preparePrint();window.print();});
 addEventListener('beforeprint',preparePrint);
 addEventListener('afterprint',restorePrintTitle);
-addEventListener('hashchange',()=>showScreen(screenForHash()));
-if(location.hash==='#custom'||location.hash==='#build-guide')showScreen(screenForHash());
+addEventListener('hashchange',openFromHash);
+if(['#custom','#build-guide','#custom-guide'].includes(location.hash))openFromHash();
 renderBuildGuide();
+Object.defineProperty(window,'gpuBuilderCustom',{get:()=>structuredClone(custom)});
 // Expose a read-only snapshot for local QA and learner debugging, never mutation hooks.
 Object.defineProperty(window,'gpuBuilderProject',{get:()=>structuredClone(project)});

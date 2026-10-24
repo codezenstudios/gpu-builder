@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test --test-isolation=none tests/*.test.mjs",
-    "check": "node --check src/app.js && node --check src/render.js && node --check src/model.js && node --check src/catalog.js && node --check src/custom.js && node --check src/guide.js"
+    "check": "node --check src/app.js && node --check src/render.js && node --check src/model.js && node --check src/catalog.js && node --check src/custom.js && node --check src/guide.js && node --check src/customGuide.js"
   },
   "engines": {
     "node": ">=24"

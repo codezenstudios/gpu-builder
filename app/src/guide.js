@@ -44,7 +44,8 @@ export function sourcingSummary(){
  return counts;
 }
 
-const formatDate=date=>new Intl.DateTimeFormat('en-US',{year:'numeric',month:'long',day:'numeric'}).format(date);
+export const formatGuideDate=date=>new Intl.DateTimeFormat('en-US',{year:'numeric',month:'long',day:'numeric'}).format(date);
+const formatDate=formatGuideDate;
 
 function stepMarkup(group,project){
  const refs=group.parts.map(part=>part.id);

@@ -38,6 +38,14 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Custom builder parts list — October 24, 2026
+
+`tests/custom-guide.test.mjs` (four tests) builds the custom document in Node: a 512 GB / 32 GB plan yields sixteen packages, two banks, a 512-bit interface and 1024 GB/s at the teaching model's 16 Gb/s per pin; a 96 GB / 16 GB plan yields a partial six-package bank with its 192-bit slice and 96 GB share; fully placed banks are marked while empty ones stay “To place”; and a custom name containing markup is escaped.
+
+`tests/custom-guide-browser.mjs` (seventeen assertions, CDP on 9228): the 512 GB / 32 GB configuration is placed, “Parts list & guide” opens the guide view with its own `#custom-guide` hash, the toolbar reads “Your memory plan, on paper” under a “PARTS LIST” eyebrow, the cover carries the custom build name, the plan lists both banks, the parts table covers the GPU plus both banks, references run to M9–M16, the capacity maths line reads `512 × 16 ÷ 8 = 1024 GB/s`, the document fits 390 px without overflow, `Page.printToPDF` produces a three-page 156 KB PDF (`QA/gpu-builder-custom-guide.pdf`), the print title is “<custom name> — parts list”, Back returns to the custom builder rather than the workbench, and `#build-guide` still renders the 22-step teaching guide. `npm test` runs 24 tests, all passing.
+
+Captures: `QA/custom-guide-preview.png`, `QA/custom-guide-phone.png` and `QA/custom-builder.png`.
+
 ## Phase 4 printable build guide — October 24, 2026
 
 `tests/guide.test.mjs` (four tests) builds the document in Node: all 22 steps and 47 references are present, sourcing classes sum to 23 hardware · 17 distributor · 2 fabrication · 5 integrated, a project name containing markup is escaped, installed references are marked, every step repeats its check question and correct answer, and each part kind carries sourcing advice.
