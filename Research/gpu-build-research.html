@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Building a GPU you can actually finish — research brief</title>
+<link rel="stylesheet" href="file:///tmp/gpdfonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ink:#1f2f26; --body:#3a4a40; --muted:#6d7b70; --faint:#8b978c;
+  --line:#dde3d6; --tint:#f4f6ef; --paper:#fff;
+  --orange:#b95430; --green:#386649; --gold:#a9803f;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font:9.6pt/1.62 'DM Sans',Arial,sans-serif;color:var(--body);background:var(--paper)}
+h1,h2,h3,h4{margin:0;font-family:'Space Grotesk',Arial,sans-serif;color:var(--ink);font-weight:600;letter-spacing:-.02em}
+p{margin:0 0 6.5pt}
+a{color:var(--green);text-decoration:none;border-bottom:.4pt solid #b9c9b6}
+strong{font-weight:700;color:var(--ink)}
+em{font-style:normal;color:var(--ink)}
+.mono{font:6.9pt/1.5 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- page ---------- */
+@page{size:A4;margin:16mm 15mm 17mm}
+@page:first{margin:0}
+.cover{height:297mm;width:210mm;background:#16241d;color:#dfe7d8;padding:23mm 20mm 16mm;position:relative;overflow:hidden;break-after:page}
+.cover .grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px);background-size:11mm 11mm;opacity:.55}
+.cover .glow{position:absolute;width:150mm;height:150mm;right:-50mm;top:-40mm;border-radius:50%;background:radial-gradient(circle,#3f6a4d55,#16241d00 65%)}
+.cover .inner{position:relative;height:100%;display:flex;flex-direction:column}
+.cover .top{display:flex;justify-content:space-between;align-items:flex-start;font-family:'JetBrains Mono',monospace;font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:#8fa78f}
+.cover .mark{display:flex;align-items:center;gap:9px;color:#e6eee0}
+.cover .mark b{display:grid;place-items:center;width:26px;height:26px;border:1px solid #4d6b55;border-radius:5px;color:#e0ad84;font-size:15px}
+.cover .mark span{font-family:'Space Grotesk',sans-serif;font-size:11pt;letter-spacing:-.02em;text-transform:none}
+.cover h1{font-size:45pt;line-height:.98;letter-spacing:-.045em;color:#fbfdf7;margin:0 0 9mm;max-width:150mm}
+.cover h1 i{font-style:normal;color:#d99a6f}
+.cover .lede{font-size:12.3pt;line-height:1.55;color:#bfcdbd;max-width:118mm}
+.cover .rule{width:34mm;height:2.6px;background:var(--orange);margin:0 0 7mm}
+.cover .middle{margin-top:auto}
+.cover .toc{margin-top:30mm;max-width:120mm}
+.cover .toc>span{display:block;font-family:'JetBrains Mono',monospace;font-size:6.3pt;letter-spacing:.18em;text-transform:uppercase;color:#7e9481;margin-bottom:3mm}
+.cover .toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2.4mm 10mm}
+.cover .toc li{font-size:8.2pt;color:#c3d0c0;display:flex;gap:2.4mm;align-items:baseline}
+.cover .toc b{font-family:'JetBrains Mono',monospace;font-size:6.6pt;color:#d99a6f;font-weight:500}
+.cover .chips{display:flex;gap:7mm;margin:11mm 0 0;border-top:1px solid #33473a;padding-top:7mm}
+.cover .chips div{flex:1}
+.cover .chips b{display:block;font-family:'Space Grotesk',sans-serif;font-size:19pt;color:#f2f7ec;font-weight:500;letter-spacing:-.03em;line-height:1.1}
+.cover .chips span{display:block;font-family:'JetBrains Mono',monospace;font-size:6.4pt;letter-spacing:.12em;text-transform:uppercase;color:#8ba08d;margin-top:3mm}
+.cover .foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:10mm;border-top:1px solid #33473a;padding-top:5mm;font-size:7.4pt;color:#8ea390}
+.cover svg.trace{position:absolute;right:-6mm;bottom:44mm;width:105mm;opacity:.5}
+
+/* ---------- structure ---------- */
+main{padding:0}
+.sec{break-inside:auto;margin:0 0 9mm}
+.sec-head{display:flex;align-items:baseline;gap:4mm;border-bottom:1.4px solid var(--ink);padding-bottom:2.4mm;margin-bottom:5mm;break-after:avoid}
+.sec-head .no{font-family:'JetBrains Mono',monospace;font-size:8pt;color:var(--orange);letter-spacing:.1em}
+.sec-head h2{font-size:19pt;letter-spacing:-.035em;line-height:1.05}
+.sec-head .tag{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:6.4pt;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+h3{font-size:11.2pt;margin:6mm 0 2mm;letter-spacing:-.015em;break-after:avoid}
+h3:first-child{margin-top:0}
+h4{font-size:8.4pt;font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--green);margin:4mm 0 1.8mm}
+.lede{font-size:10.6pt;line-height:1.6;color:#46564a}
+.small{font-size:8.3pt;line-height:1.6;color:var(--muted)}
+.tiny{font-size:7.3pt;line-height:1.55;color:var(--faint)}
+.ruled{border-top:1px solid var(--line);margin:5mm 0}
+
+/* ---------- callout ---------- */
+.callout{border-left:2.5px solid var(--orange);background:var(--tint);padding:4.2mm 5mm;margin:4.5mm 0;break-inside:avoid}
+.callout h4{margin:0 0 1.6mm;color:var(--orange)}
+.callout p:last-child{margin-bottom:0}
+.callout.green{border-left-color:var(--green)}
+.callout.green h4{color:var(--green)}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;margin:3mm 0 4mm;font-size:8.3pt;line-height:1.5;break-inside:auto}
+thead{display:table-header-group}
+th{font-family:'JetBrains Mono',monospace;font-size:6.4pt;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--muted);text-align:left;padding:2mm 2.4mm;border-bottom:1px solid var(--ink);background:none}
+td{padding:2.2mm 2.4mm;border-bottom:.5px solid var(--line);vertical-align:top}
+tr{break-inside:avoid}
+td.k{font-weight:700;color:var(--ink)}
+td.src a{font-family:'JetBrains Mono',monospace;font-size:6.8pt;letter-spacing:.02em;border:0;color:var(--green)}
+tbody tr:nth-child(even) td{background:#fafbf7}
+
+/* ---------- steps ---------- */
+.phase{display:flex;align-items:center;gap:3mm;margin:6mm 0 3mm;break-after:avoid}
+.phase span:first-child{font-family:'JetBrains Mono',monospace;font-size:6.6pt;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);border:1px solid #e3c7b8;background:#fbf3ee;padding:1.1mm 2mm;border-radius:2px}
+.phase span:last-child{flex:1;height:1px;background:var(--line)}
+.step{display:grid;grid-template-columns:9mm 1fr;gap:0 4mm;padding:3.2mm 0;border-bottom:.5px solid var(--line);break-inside:avoid}
+.step:first-of-type{border-top:.5px solid var(--line)}
+.step .n{font:8pt 'JetBrains Mono',monospace;color:var(--orange);padding-top:.6mm}
+.step h4{margin:0 0 1.2mm;font-family:'Space Grotesk',sans-serif;font-size:10.4pt;letter-spacing:-.015em;text-transform:none;color:var(--ink);font-weight:600}
+.step p{margin:0 0 1.6mm;font-size:9pt;line-height:1.58}
+.step .buy{font-size:7.6pt;line-height:1.55;color:var(--muted)}
+.step .buy b{font-family:'JetBrains Mono',monospace;font-size:6.3pt;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-right:1.5mm}
+.step p:last-child{margin-bottom:0}
+
+/* ---------- case cards ---------- */
+.case{border:1px solid var(--line);border-top:2.2px solid var(--green);padding:4mm 5mm 3.4mm;margin:0 0 4mm;break-inside:avoid;background:#fdfefb}
+.case .head{display:flex;align-items:baseline;gap:3mm;margin-bottom:2.4mm}
+.case .head h3{font-size:12.4pt;margin:0}
+.case .head .yr{margin-left:auto;font:6.6pt 'JetBrains Mono',monospace;color:var(--faint);letter-spacing:.08em;white-space:nowrap}
+.case .tag{font:6pt 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;padding:1mm 1.8mm;border-radius:2px;background:#e9f0e3;color:#4f6b43;white-space:nowrap}
+.case .tag.mod{background:#f7eae0;color:#a45f38}
+.case .tag.fail{background:#f2ece6;color:#8a7361}
+.case dl{display:grid;grid-template-columns:22mm 1fr;gap:1.4mm 4mm;margin:0}
+.case dt{font:6.3pt 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-top:.7mm}
+.case dd{margin:0;font-size:8.6pt;line-height:1.55}
+.case dd b{color:var(--ink)}
+.case .links{margin-top:2.6mm;padding-top:2.2mm;border-top:.5px solid var(--line);font:6.7pt 'JetBrains Mono',monospace;color:var(--faint);letter-spacing:.02em}
+.case .links a{border:0;margin-right:3mm;color:var(--green)}
+
+/* ---------- misc ---------- */
+.cols2{columns:2;column-gap:8mm}
+.cols2>*{break-inside:avoid}
+ul{margin:0 0 4mm;padding-left:4.4mm}
+li{margin-bottom:1.4mm}
+li::marker{color:var(--orange)}
+.boundary{display:grid;grid-template-columns:1fr 1fr;gap:3mm 6mm;margin:3mm 0}
+.boundary div{font-size:8.2pt;line-height:1.55}
+.boundary b{display:block;color:var(--ink);font-size:8.6pt}
+.boundary span{color:var(--muted)}
+.boundary a{font-family:'JetBrains Mono',monospace;font-size:6.6pt}
+.sources{padding-top:1mm}
+.sources ol{padding-left:5mm;margin:0}
+.sources li{font-size:7.4pt;line-height:1.5;margin-bottom:1.3mm;color:var(--muted);break-inside:avoid}
+.sources a{font-family:'JetBrains Mono',monospace;font-size:6.8pt;border:0;color:#4d6f52}
+.footer-note{margin-top:7mm;border-top:1px solid var(--ink);padding-top:3mm;font-size:7.4pt;color:var(--faint);line-height:1.6}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin:4mm 0 5mm}
+.kv div{border-top:1.6px solid var(--ink);padding-top:2mm}
+.kv b{display:block;font:500 15pt 'Space Grotesk',sans-serif;color:var(--ink);letter-spacing:-.03em;line-height:1.1}
+.kv span{display:block;font-size:7.2pt;color:var(--muted);line-height:1.45;margin-top:1.2mm}
+.nobreak{break-inside:avoid}
+.pagebreak{break-before:page}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <svg class="trace" viewBox="0 0 420 220" fill="none" aria-hidden="true">
+    <g stroke="#4c7a5c" stroke-width="0.9" opacity=".75">
+      <path d="M0 30h120l26 26v70l24 24h130l26-26V60"/>
+      <path d="M0 62h98l20 20v58"/>
+      <path d="M18 190h150l22-22h120l20-20V96"/>
+      <path d="M300 0v44l22 22h98"/>
+      <path d="M330 220v-38l18-18h72"/>
+    </g>
+    <g fill="#c58a5f">
+      <circle cx="146" cy="56" r="2.4"/><circle cx="300" cy="150" r="2.4"/>
+      <circle cx="118" cy="82" r="2.4"/><circle cx="310" cy="94" r="2.4"/>
+      <circle cx="188" cy="168" r="2.4"/><circle cx="322" cy="66" r="2.4"/>
+    </g>
+    <g fill="#2f4a39" stroke="#4c7a5c" stroke-width=".8">
+      <rect x="196" y="88" width="44" height="44" rx="3"/>
+      <rect x="256" y="120" width="26" height="26" rx="2"/>
+      <rect x="120" y="120" width="22" height="22" rx="2"/>
+    </g>
+  </svg>
+
+  <div class="inner">
+    <div class="top">
+      <div class="mark"><b>◧</b><span>GPU Builder</span></div>
+      <div>Research brief · October 2026</div>
+    </div>
+
+    <div class="toc">
+      <span>Contents</span>
+      <ol>
+        <li><b>01</b>The ceiling, stated honestly</li>
+        <li><b>02</b>Fourteen steps, spec to card</li>
+        <li><b>03</b>Where the parts come from</li>
+        <li><b>04</b>Nine case studies</li>
+        <li><b>05</b>What actually goes wrong</li>
+        <li><b>—</b>Sources</li>
+      </ol>
+    </div>
+
+    <div class="middle">
+      <div class="rule"></div>
+      <h1>Building a GPU you can <i>actually finish</i></h1>
+      <p class="lede">What is genuinely purchasable, the full fabrication and assembly sequence, and nine documented projects that prove where the line really sits.</p>
+    </div>
+
+    <div class="chips">
+      <div><b>3</b><span>real routes to a card</span></div>
+      <div><b>14</b><span>steps from spec to validation</span></div>
+      <div><b>9</b><span>verified case studies</span></div>
+      <div><b>31</b><span>sources read</span></div>
+    </div>
+
+    <div class="foot">
+      <div>Prepared for the GPU Builder teaching project<br>Companion document to the 22-step build guide</div>
+      <div style="text-align:right">Prices indicative, checked October 2026<br>Availability changes weekly</div>
+    </div>
+  </div>
+</section>
+
+<main>
+
+<!-- ============ 01 ============ -->
+<section class="sec">
+  <div class="sec-head"><span class="no">01</span><h2>The ceiling, stated honestly</h2><span class="tag">Feasibility</span></div>
+
+  <p class="lede">You cannot buy a modern GPU core and build a retail graphics card from a catalogue. The GPU package and its GDDR are supplied to board partners, and a dense multi-layer board with 0.25 mm-pitch BGA work is a fab-line job. Everything else — the board, the cooling, the connectors, the fabrication, the assembly service — is purchasable by an individual.</p>
+
+  <div class="kv">
+    <div><b>Partner-only</b><span>GPU cores and GDDR are not retail parts; expect salvage or donor-card supply</span></div>
+    <div><b>10–32</b><span>PCB layers on real designs; Valve's GDDR6 board is 10</span></div>
+    <div><b>0.25 mm</b><span>Finest BGA pitch PCBWay publishes for assembly</span></div>
+    <div><b>4 years</b><span>Spare-time effort behind the one finished hobby PCIe card</span></div>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:23%">Route</th><th style="width:33%">What you actually do</th><th style="width:19%">Realistic cost</th><th>Documented by</th></tr></thead>
+    <tbody>
+      <tr><td class="k">A · FPGA graphics card</td><td>Buy an FPGA system-on-module with a hardened PCIe block, design a carrier PCB in KiCad, fabricate it, write the GPU in SystemVerilog plus a display driver</td><td>High hundreds to low thousands, dominated by the SoM and board revisions</td><td>FuryGpu; VGATonic at the cheap end</td></tr>
+      <tr><td class="k">B · Donor-card rebuild or memory mod</td><td>Take a working card, move the GPU package and memory onto a new or clamshell PCB, modify firmware</td><td>≈ $430 parts + ≈ $140 clamshell kit, plus tools or a rework shop</td><td>VIK-on's 48 GB RTX 4090; 2080 Ti 22 GB attempts</td></tr>
+      <tr><td class="k">C · Custom ASIC card</td><td>Design silicon, tape out, package, build the board</td><td>$2–3 M for a 100k-chip run before product costs</td><td>Open Graphics Project — and no consumer card shipped</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <h4>The sentence to teach first</h4>
+    <p>Capacity is not performance, and a recognised capacity is not a working card. The 2021 RTX 2080 Ti 22 GB attempt made the card <em>report</em> 22 GB and then produced severe artifacts, because the right memory packages could not be sourced. Validation, not enumeration, is what makes a build real.</p>
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section class="sec">
+  <div class="sec-head"><span class="no">02</span><h2>Step by step, spec to validated card</h2><span class="tag">14 steps</span></div>
+
+  <p>Steps 1–3 decide what you are building. Steps 4–8 are design. Steps 9–12 are the build. Steps 13–14 are what separate a demo from a card. Each step names what you buy for it.</p>
+
+  <div class="phase"><span>Phase A · decide</span><span></span></div>
+
+  <div class="step"><div class="n">01</div><div>
+    <h4>Write the spec before you buy anything</h4>
+    <p>Pin down output resolution and refresh, PCIe generation and lane count, memory capacity and bus width, power budget, board dimensions, and — most importantly — <em>what software will run on it</em>. FuryGpu's author spent almost four years and landed at "mid-1990s GPU class, Quake at a solid 60 fps". That is the realistic ceiling for route A.</p>
+    <p class="buy"><b>Source it</b>Nothing yet. The spec determines every later purchase.</p>
+  </div></div>
+
+  <div class="step"><div class="n">02</div><div>
+    <h4>Choose the engine</h4>
+    <p><strong>Route A:</strong> an FPGA SoM with a <em>hardened</em> PCIe core — not one built out of general logic. Barrie chose Xilinx's Kria Zynq UltraScale+ family for exactly that reason, plus its DSP and LUT budget. Check stock and price at Digi-Key, Mouser or Avnet; the KV260 starter kit is the usual entry point.</p>
+    <p><strong>Route B:</strong> a same-model donor card. The GPU package, memory configuration, strap resistors and firmware are all model-specific, so "a 4090" is not interchangeable with "a 4090 Suprim".</p>
+    <p class="buy"><b>Source it</b>Digi-Key · Mouser · Avnet; eBay or a repair shop for donors.</p>
+  </div></div>
+
+  <div class="step"><div class="n">03</div><div>
+    <h4>Read the two standards you will be held to</h4>
+    <p><strong>PCI-SIG CEM</strong> defines the x1/x4/x8/x16 card-edge pinout, the motherboard footprint and the mating interface — the edge is a mechanical <em>and</em> electrical standard, not just copper fingers. Members access the specification library; non-members can purchase it.</p>
+    <p><strong>JEDEC JESD250D</strong> covers GDDR6: 8–16 Gb, x16 dual-channel devices. Note that AC timings and capacitances are <em>not</em> fully standardised, so the memory vendor's datasheet governs, not the standard.</p>
+    <p class="buy"><b>Source it</b><a href="https://pcisig.com/specifications">pcisig.com/specifications</a> · <a href="https://www.jedec.org/standards-documents/docs/jesd250d">jedec.org · JESD250D</a></p>
+  </div></div>
+
+  <div class="phase"><span>Phase B · design</span><span></span></div>
+
+  <div class="step"><div class="n">04</div><div>
+    <h4>Design the power tree</h4>
+    <p>You need the GPU rail (sub-1 V at very high current), the memory rail, and auxiliary rails, all sequenced so nothing is back-powered during bring-up. Multiphase buck controllers are the norm: study TI's <em>Multiphase 101</em> series for the equations and lab method, then look at a real board — GamersNexus counted a 16-phase VRM on the Titan V.</p>
+    <p class="buy"><b>Source it</b>Controllers, DrMOS/power stages, inductors and capacitors from Mouser or Digi-Key; TI reference designs.</p>
+  </div></div>
+
+  <div class="step"><div class="n">05</div><div>
+    <h4>Schematic capture</h4>
+    <p>KiCad is free and is what FuryGpu used. The sheet contains the SoM or GPU footprint, memory, power tree, PCIe edge, display connectors, fan headers, and the SPI flash that holds firmware. Draw the power sequencing and test points deliberately — you will need them at step 11.</p>
+    <p class="buy"><b>Source it</b>KiCad (free). Nothing to buy.</p>
+  </div></div>
+
+  <div class="step"><div class="n">06</div><div>
+    <h4>Talk to the fabricator before you lay out</h4>
+    <p>This is the step hobbyists skip and then lose a month. Ask for the stackup, the impedance tolerance, <strong>electrolytic hard gold</strong> on the edge fingers (ENIG gold is not the same thing), and a bevel angle. Confirm they can do all of it on one order. FuryGpu's board went through several JLCPCB revisions, fixing issues that only appeared once a board arrived.</p>
+    <p class="buy"><b>Source it</b>PCBWay · Sierra Circuits · Bay Area Circuits · Eurocircuits · JLCPCB (verify hard gold).</p>
+  </div></div>
+
+  <div class="step"><div class="n">07</div><div>
+    <h4>Lay out the board</h4>
+    <p>BGA escape, memory routing, PCIe differential pairs, solid reference planes, thermal copper. Three facts worth internalising: layer count is design-dependent, not a rule — Valve's GDDR6 GPU board is 10 layers; their engineer matches <em>signal arrival delay</em> rather than physical length, because propagation speed differs per layer; and they used backdrilling to remove via stubs. AMD's public fly-by versus clamshell guidance is written for DDR4, so use it to teach the concept, never as a GDDR6 recipe.</p>
+    <p class="buy"><b>Source it</b>Cadence's GDDR6 SI/PI paper for the validation workflow; AMD UG583 for topology concepts.</p>
+  </div></div>
+
+  <div class="step"><div class="n">08</div><div>
+    <h4>Design the cooling and the mechanicals</h4>
+    <p>Heatsink or vapour chamber, fan curve, pad thickness over memory and VRM, backplate, PCIe bracket, M2.5 standoffs, and the airflow path. On a 4090, GamersNexus measured roughly 5 °C just from blocking the flow-through opening — airflow is part of the electrical design, not an accessory.</p>
+    <p class="buy"><b>Source it</b>Thermal Grizzly or ModMyMods pads and paste; Noctua or Delta fans; McMaster-Carr M2.5 hardware; exact-match brackets from eBay spares.</p>
+  </div></div>
+
+  <div class="phase"><span>Phase C · build</span><span></span></div>
+
+  <div class="step"><div class="n">09</div><div>
+    <h4>Fabricate the bare board</h4>
+    <p>Quote it as the product it is. A $5 two-layer prototype is not the same object as a 10-layer controlled-impedance card with hard-gold fingers, and a fabricator's advertised layer count does not by itself prove they can build your stackup. Ask for the impedance coupon and the edge-contact drawing with the quote.</p>
+    <p class="buy"><b>Source it</b>PCBWay (14 layers standard, 0.15 mm min annular ring, 20–60° bevels) · Sierra (HDI to 30 layers, ±5 %) · OSH Park for 4-layer only, no hard gold.</p>
+  </div></div>
+
+  <div class="step"><div class="n">10</div><div>
+    <h4>Assemble and inspect</h4>
+    <p>Stencil, paste, place, reflow, inspect. Hidden BGA joints need <em>X-ray</em> — you cannot eyeball them, and a hot-air station alone is not a GPU BGA process. A typical SAC305 profile peaks at 235–245 °C with 45–90 s above liquidus, but that is an example, not a recipe: build the profile for your paste, board and components. Underfill is optional and only where the package calls for it.</p>
+    <p class="buy"><b>Source it</b>Turnkey assembly from PCBWay, Eurocircuits (from one board) or Sierra; reball service at Joshi Repair (£60 GPU, £10/chip memory).</p>
+  </div></div>
+
+  <div class="step"><div class="n">11</div><div>
+    <h4>Bring it up in order</h4>
+    <p>Check every rail against its sequencing order <em>before</em> fitting the expensive part. Then confirm PCIe enumeration, flash the bitstream or firmware, and only then fit the cooler. Keep a dead short and a current-limited bench supply in the loop for the first power-on.</p>
+    <p class="buy"><b>Source it</b>Bench supply and a thermal camera or IR thermometer; SPI flash programmer if not in-system.</p>
+  </div></div>
+
+  <div class="step"><div class="n">12</div><div>
+    <h4>Display output and drivers</h4>
+    <p>DisplayPort and HDMI mean EDID, mode setting and a real display driver. Barrie is blunt that Windows kernel driver work was the most painful part of the entire project — harder than the RTL or the board. Budget for it in the spec, not at the end.</p>
+    <p class="buy"><b>Source it</b>Digi-Key or Mouser board-mount HDMI/DisplayPort receptacles; the vendor's display-controller documentation.</p>
+  </div></div>
+
+  <div class="phase"><span>Phase D · prove</span><span></span></div>
+
+  <div class="step"><div class="n">13</div><div>
+    <h4>Assemble the cooler and check fit</h4>
+    <p>Torque the cooler evenly, verify pad contact on memory and VRM, fit the backplate and bracket, and check the card physically seats in a real slot with a real chassis clearance. A card that only fits a test bench is not finished.</p>
+    <p class="buy"><b>Source it</b>Model-specific fans and heatsinks from GPU Fan Replacement or eBay; Noctua for deshroud builds.</p>
+  </div></div>
+
+  <div class="step"><div class="n">14</div><div>
+    <h4>Validate, then label it honestly</h4>
+    <p>Memory stress, thermal soak, benchmark loops, power draw at the wall, and a long stability run. Then describe the result for what it is: display-output verified, FPGA or ASIC design, board modification, or planned. That label is the difference between a case study and a claim.</p>
+    <p class="buy"><b>Source it</b>Nothing to buy — this step is time and measurement.</p>
+  </div></div>
+</section>
+
+<!-- ============ 03 ============ -->
+<section class="sec">
+  <div class="sec-head"><span class="no">03</span><h2>Where the parts actually come from</h2><span class="tag">Sourcing</span></div>
+
+  <p class="lede">Four categories behave completely differently. Ordinary electronics are catalogue parts; mechanical parts are model-specific; memory is broker supply; the GPU package has no retail channel at all.</p>
+
+  <h3>Fabrication and assembly</h3>
+  <table>
+    <thead><tr><th style="width:19%">Supplier</th><th style="width:47%">What they publish</th><th>Watch for</th></tr></thead>
+    <tbody>
+      <tr><td class="k">PCBWay</td><td>1–14 layers standard, HDI and high-layer on request; 0.15 mm minimum annular ring; hard gold and 20/30/45/60° bevels; BGA assembly to 0.25 mm pitch with X-ray</td><td>Quote the stackup, gold and bevel together</td></tr>
+      <tr><td class="k">Sierra Circuits</td><td>HDI to 30 layers, rigid to 36; ±5 % advanced impedance; electrolytic hard gold; 20–45° bevels</td><td>Premium quote; ask for the impedance coupon</td></tr>
+      <tr><td class="k">Bay Area Circuits</td><td>Up to 30 layers, HDI, ±5 % advanced with TDR testing, hard gold, 20–60° bevels</td><td>US turnaround; custom quote</td></tr>
+      <tr><td class="k">Eurocircuits</td><td>16-layer pool, defined-impedance pool at 4/6/8 layers, gold edge connectors and bevelling; assembly from a single PCB</td><td>Best small-run assembly route in the EU</td></tr>
+      <tr><td class="k">JLCPCB</td><td>1–32 layers, 1–3-step HDI, ±10 % impedance, gold fingers, cheap prototypes and standard PCBA</td><td>Gold fingers are gold <em>under ENIG</em> — confirm hard gold explicitly; economic PCBA excludes gold fingers</td></tr>
+      <tr><td class="k">OSH Park</td><td>4 layers, fixed stackup, $10/in² for three boards</td><td>No hard gold, no bevel — not a card edge</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Memory, cores and rework</h3>
+  <table>
+    <thead><tr><th style="width:19%">Item</th><th style="width:47%">Where it comes from</th><th>Indicative price</th></tr></thead>
+    <tbody>
+      <tr><td class="k">GDDR6 / GDDR6X</td><td>Micron catalogue and sample route; brokers, AliExpress, eBay; harvested from dead cards</td><td>Joshi Repair: 1 GB £15, 2 GB £20, GDDR6X 1 GB £25, 2 GB £40</td></tr>
+      <tr><td class="k">GPU package</td><td>Same-model donor card, or a repairer who sources it. Salvage cores online are unverified provenance</td><td>Donor-card dependent</td></tr>
+      <tr><td class="k">Reballing service</td><td>Joshi Repair; Circuits Central with pre- and post-work X-ray</td><td>£60 GPU, £10 per memory chip; X-ray quoted</td></tr>
+      <tr><td class="k">Hot air</td><td>Aoyue 852A++</td><td>$149.99</td></tr>
+      <tr><td class="k">Reflow oven</td><td>VEVOR T-962A</td><td>$266.99</td></tr>
+      <tr><td class="k">Integrated BGA station</td><td>AOYUE BGA9000A</td><td>≈ $10,137</td></tr>
+      <tr><td class="k">X-ray</td><td>Refurbished systems start under $25,000 — use a service instead</td><td>Job quoted</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Everything around the board</h3>
+  <table>
+    <thead><tr><th style="width:24%">Part</th><th style="width:45%">Source</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Fans, heatsink, backplate, bracket</td><td>GPU Fan Replacement, eBay spares, Noctua, Delta/Sunon via Digi-Key</td><td>Model-specific; measure before ordering</td></tr>
+      <tr><td class="k">Thermal pads and paste</td><td>Thermal Grizzly, ModMyMods</td><td>Kryonaut 1 g $11.58; pad thickness is design-specific</td></tr>
+      <tr><td class="k">8-pin / 12V-2×6 power</td><td>Molex Mini-Fit via Digi-Key/Mouser; MODDIY for 12VHPWR</td><td>12VHPWR from $2.99 — verify revision and rating</td></tr>
+      <tr><td class="k">HDMI / DisplayPort</td><td>Digi-Key, Mouser board-mount receptacles</td><td>Match footprint and high-speed requirements</td></tr>
+      <tr><td class="k">Standoffs, screws</td><td>McMaster-Carr M2.5, electronics assortments</td><td>Ordinary catalogue parts</td></tr>
+      <tr><td class="k">VRM silicon</td><td>Mouser, Digi-Key, TI reference designs</td><td>Generic parts are easy; the validated layout is not</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green">
+    <h4>The realistic purchasing plan</h4>
+    <p>Do not try to buy a new GPU core from a distributor. Buy a <em>donor card</em> for the GPU and its memory, commission a bare board with hard gold and a bevel, and pay a rework shop for the BGA work and X-ray. Everything else — cooling, hardware, connectors, paste — is ordinary retail.</p>
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section class="sec pagebreak">
+  <div class="sec-head"><span class="no">04</span><h2>Case studies</h2><span class="tag">Verified</span></div>
+  <p>Each entry was checked against a primary page — the project's own writing, the chip page, or a hands-on report. Cost figures are the ones the sources state.</p>
+
+  <div class="case">
+    <div class="head"><h3>FuryGpu</h3><span class="tag">display verified</span><span class="yr">2021–2024 · Dylan Barrie</span></div>
+    <dl>
+      <dt>Built</dt><dd>A real PCIe graphics card: Kria Zynq UltraScale+ SoM on a custom KiCad board fabricated at JLCPCB, DisplayPort and HDMI outputs, 4-lane PCIe, custom graphics API, and <b>Windows kernel display and audio drivers</b>.</dd>
+      <dt>Numbers</dt><dd>Almost four years of spare time, several board revisions, Quake at a solid 60 fps. Capability comparable to a high-end mid-1990s GPU.</dd>
+      <dt>Lesson</dt><dd>The template for route A. Board design was hard; the <b>driver</b> was the hardest part. Start small: he began with an Arty Z7 and a spinning cube.</dd>
+    </dl>
+    <div class="links"><a href="https://www.furygpu.com/">furygpu.com</a><a href="https://www.furygpu.com/blog/hello">blog/hello</a><a href="https://www.tweaktown.com/news/97183/furygpu-pc-enthusiast-builds-own-diy-gpu-with-custom-windows-drivers-to-run-quake-at-60-fps/index.html">tweaktown</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>TinyGPU · TT07</h3><span class="tag">ASIC design</span><span class="yr">2024 · Tiny Tapeout</span></div>
+    <dl>
+      <dt>Built</dt><dd>A GPU <b>taped out as an ASIC</b> on a Tiny Tapeout shuttle, driving a VGA monitor through a TinyVGA PMOD. Transformation, lighting, rasterisation and affine texture mapping; geometry fed from a PC over serial.</dd>
+      <dt>Numbers</dt><dd>50 MHz, 640×480 at 6-bit RGB, two textured triangles, no framebuffer or line buffer.</dd>
+      <dt>Lesson</dt><dd>The cheapest real silicon path that exists — and a precise demonstration of why scale limits are architectural, not just budget.</dd>
+    </dl>
+    <div class="links"><a href="https://tinytapeout.com/chips/tt07/tt_um_pongsagon_tiniest_gpu">tinytapeout.com · tt07</a><a href="https://github.com/pongsagon/tt07-tiniest-gpu">github</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>TinyGPU v2</h3><span class="tag">ASIC design</span><span class="yr">SKY25b shuttle</span></div>
+    <dl>
+      <dt>Built</dt><dd>A standalone version reading models from QSPI flash with gamepad input, 320×240 at 4-bit colour, z-buffered, up to 1,000 triangles.</dd>
+      <dt>Numbers</dt><dd>6.5 fps at 25 MHz; a documented viewport-edge condition could freeze the GPU until reset, fixed in v3.</dd>
+      <dt>Lesson</dt><dd>Rare public evidence of <b>iteration between silicon revisions</b> — the honest version of a roadmap.</dd>
+    </dl>
+    <div class="links"><a href="https://tinytapeout.com/chips/ttsky25b/tt_um_pongsagon_tinygpu_v2">tinytapeout.com · v2</a><a href="https://github.com/pongsagon/tt_um_pongsagon_tinygpu_v2">github</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>VGATonic</h3><span class="tag">display verified</span><span class="yr">circa 2014 · PK</span></div>
+    <dl>
+      <dt>Built</dt><dd>A 144-macrocell CPLD video adapter with a microcontroller, home-made PCB and SPI interface, plus Raspberry Pi, Linux and Arduino drivers.</dd>
+      <dt>Numbers</dt><dd>≈ <b>$24 in parts</b>; 640×480 at 60 Hz in RGB332; 25 fps over SPI; a Doom demo running from a Raspberry Pi 2.</dd>
+      <dt>Lesson</dt><dd>A display-producing "GPU" is achievable on a hobby budget — proof that the entry barrier is knowledge, not money.</dd>
+    </dl>
+    <div class="links"><a href="https://dqydj.com/how-to-create-an-fpga-graphics-card/">dqydj.com · build write-up</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>RTX 4090 · 24 GB → 48 GB</h3><span class="tag mod">board modification</span><span class="yr">Sept 2025 · VIK-on</span></div>
+    <dl>
+      <dt>Built</dt><dd>An MSI Suprim donor; the AD102 package and twelve 2 GB GDDR6X chips moved onto a <b>custom clamshell PCB</b> with memory on both sides, a blower cooler, and modified firmware so the system accepts the larger capacity.</dd>
+      <dt>Numbers</dt><dd>≈ $140 for the clamshell kit, ≈ $430 in parts for a DIY upgrade, before shipping.</dd>
+      <dt>Lesson</dt><dd>The closest real analogue to a banked memory layout: capacity comes from <b>more packages plus firmware support</b>, not a faster GPU. Also the clearest warning about warranty, reliability and resale.</dd>
+    </dl>
+    <div class="links"><a href="https://www.techpowerup.com/340880/nvidia-geforce-rtx-4090-gets-a-48-gb-mod-and-step-by-step-tutorial">techpowerup</a><a href="https://hothardware.com/news/geforce-rtx-4090-48gb-vram-mod">hothardware</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>RTX 2080 Ti · 11 GB → 22 GB</h3><span class="tag mod">board modification</span><span class="yr">2021–2024</span></div>
+    <dl>
+      <dt>Built</dt><dd>Replacing 1 GB GDDR6 modules with 2 GB Samsung parts on an Asus 2080 Ti, with strap and firmware changes; a 2024 video documents the 11-to-22 GB procedure.</dd>
+      <dt>Numbers</dt><dd>Double capacity, unchanged compute. The 2021 attempt did not reach a usable card.</dd>
+      <dt>Lesson</dt><dd>The canonical "<b>capacity recognised ≠ working card</b>" case: it reported 22 GB, then showed severe artifacts, because the larger packages could not be sourced.</dd>
+    </dl>
+    <div class="links"><a href="https://videocardz.com/newz/modded-geforce-rtx-2080-ti-supports-22gb-of-gddr6-memory">videocardz</a><a href="https://www.youtube.com/watch?v=-dWSWDOj6Ag">upgrade video</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>3D Graphics Thingy</h3><span class="tag fail">abandoned</span><span class="yr">pre-2013 · Big Mess o' Wires</span></div>
+    <dl>
+      <dt>Attempted</dt><dd>An ambitious FPGA 3D graphics processor that never reached its graphics features.</dd>
+      <dt>Numbers</dt><dd>Died of DDR2 bandwidth, a memory-controller side quest, and fighting Xilinx tooling.</dd>
+      <dt>Lesson</dt><dd>The author's own conclusion: start small and expand incrementally. The successor plan used the DE1 board's onboard SRAM instead of chasing external memory.</dd>
+    </dl>
+    <div class="links"><a href="https://www.bigmessowires.com/2013/09/11/son-of-3d-graphics-thingy-a-homebrew-graphics-processor/">bigmessowires.com · post-mortem</a></div>
+  </div>
+
+  <div class="case">
+    <div class="head"><h3>OGD1 · Open Graphics Project</h3><span class="tag fail">stopped short</span><span class="yr">2006–2008</span></div>
+    <dl>
+      <dt>Built</dt><dd>A real open-hardware PCI/PCI-X graphics board: two FPGAs, 256 MB RAM, DVI and S-video outputs, schematics released.</dd>
+      <dt>Numbers</dt><dd><b>$1,500</b> preorder, $1,400 for the first hundred. A 100k-chip ASIC run was estimated at <b>$2–3 M</b> before other product costs.</dd>
+      <dt>Lesson</dt><dd>The board shipped as a <em>development platform</em>, not a working GPU, and the consumer ASIC card never arrived. The clearest cost-reality case study in the field.</dd>
+    </dl>
+    <div class="links"><a href="https://www.engadget.com/2008-05-21-open-source-ogd1-graphics-card-up-for-pre-order.html">engadget</a><a href="https://www.freesoftwaremagazine.com/articles/group_interview_graphic_view_open_hardware_movement_part_2_technical_and_social_issues/">ASIC economics interview</a></div>
+  </div>
+
+  <h3>Boundary cases — label these honestly</h3>
+  <div class="boundary">
+    <div><b>Vortex</b><a href="https://github.com/vortexgpgpu/vortex">github.com/vortexgpgpu</a><span>RISC-V GPGPU, 32-core Stratix 10 configuration, PCIe and OpenCL. No verified direct monitor output — an acceleration and architecture study.</span></div>
+    <div><b>Nyuzi</b><a href="https://github.com/jbush001/NyuziProcessor">github.com/jbush001</a><span>Experimental synthesizable GPGPU with graphics programs, but compute-focused by its own documentation. No verified display card.</span></div>
+    <div><b>MIAOW</b><a href="https://miaowgpu.org/">miaowgpu.org</a><span>An open RTL implementation of an AMD compute unit; its authors state it lacks graphical output and a memory interface.</span></div>
+    <div><b>FIFOgfx</b><a href="https://github.com/MagerValp/fifogfx">github.com/MagerValp</a><span>Open graphics adapter for 8/16-bit machines, under-$50 BOM, documented design rather than a verified finished build.</span></div>
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section class="sec pagebreak">
+  <div class="sec-head"><span class="no">05</span><h2>What actually goes wrong</h2><span class="tag">Patterns</span></div>
+
+  <div class="cols2">
+    <p><strong>Sourcing beats skill.</strong> Every failed or stalled board in this research failed at a part, not at the soldering: unavailable 2 GB GDDR6 modules, no retail GPU core, a 100k-chip run that needed millions.</p>
+    <p><strong>The driver is the long pole.</strong> FuryGpu's author calls Windows driver work the most painful part of four years — more than the RTL or the PCB. A card with no driver is a bench ornament.</p>
+    <p><strong>Scope creep kills FPGA projects.</strong> 3DGT died chasing external memory bandwidth and tooling. The projects that shipped started with one triangle or one spinning cube.</p>
+    <p><strong>Validation is the product.</strong> The 2080 Ti mod reported the right capacity and produced artifacts. Reporting and working are different states.</p>
+    <p><strong>Cheapness is legitimate.</strong> VGATonic cost $24 and produced a real picture. It is a better first project than a 10-layer PCIe card.</p>
+    <p><strong>Memory on both sides is a real technique.</strong> The 4090 clamshell mod doubles capacity by doubling package count — the same principle a banked build teaches.</p>
+  </div>
+
+  <div class="ruled"></div>
+
+  <h3>How to present these on the site</h3>
+  <p>Give every case one of four labels, and never remove it: <strong>display-output verified</strong>, <strong>FPGA or ASIC design</strong>, <strong>board modification</strong>, <strong>planned or abandoned</strong>. That single field stops an unprogrammed OGD1 or a MIAOW compute unit from reading as a finished graphics card, and it gives the failure cases as much standing as the successes.</p>
+
+  <h3>Where this connects to the current build guide</h3>
+  <ul>
+    <li>The guide's sourcing classes map directly onto reality: <em>hardware</em> and <em>distributor</em> parts are genuinely buyable, <em>fabrication</em> is commissionable, and <em>integrated</em> parts (GPU package, GDDR) have no retail channel — which is exactly what the donor-card route is for.</li>
+    <li>The custom builder's bank model has a documented precedent: the 48 GB clamshell conversion adds capacity by adding packages on both sides of the board and changing firmware.</li>
+    <li>Any step that says "solder the memory" should say <em>who</em> solders it, at what pitch, and with what inspection — otherwise the lesson teaches a process nobody can safely finish at home.</li>
+  </ul>
+
+  <div class="callout">
+    <h4>Caveats worth printing on the page</h4>
+    <p>Prices were checked in October 2026 and move weekly, especially on memory. Fabricator capability tables describe what a vendor <em>advertises</em>; confirm your specific stackup, hard gold and bevel in writing. Reflow ovens and hot-air stations are mains-powered, reach 250 °C and produce lead-free fumes — extraction and fire safety are part of the lesson, not a footnote. Nothing here is a promise that a home-built card will be stable, warrantable or resellable.</p>
+  </div>
+
+  <h3 class="pagebreak">Sources</h3>
+  <div class="sources">
+    <ol>
+      <li>FuryGpu project and author's account — <a href="https://www.furygpu.com/">furygpu.com</a>, <a href="https://www.furygpu.com/blog/hello">/blog/hello</a></li>
+      <li>TweakTown, "DIY GPU with custom Windows drivers to run Quake at 60 fps" — <a href="https://www.tweaktown.com/news/97183/furygpu-pc-enthusiast-builds-own-diy-gpu-with-custom-windows-drivers-to-run-quake-at-60-fps/index.html">tweaktown.com</a></li>
+      <li>Tiny Tapeout TT07 TinyGPU — <a href="https://tinytapeout.com/chips/tt07/tt_um_pongsagon_tiniest_gpu">tinytapeout.com</a>, <a href="https://github.com/pongsagon/tt07-tiniest-gpu">source</a></li>
+      <li>TinyGPU v2, SKY25b — <a href="https://tinytapeout.com/chips/ttsky25b/tt_um_pongsagon_tinygpu_v2">chip page</a>, <a href="https://github.com/pongsagon/tt_um_pongsagon_tinygpu_v2">repository</a></li>
+      <li>VGATonic build, cost and demo — <a href="https://dqydj.com/how-to-create-an-fpga-graphics-card/">dqydj.com</a></li>
+      <li>Open Graphics Project OGD1 preorder — <a href="https://www.engadget.com/2008-05-21-open-source-ogd1-graphics-card-up-for-pre-order.html">engadget.com</a>; ASIC economics — <a href="https://www.freesoftwaremagazine.com/articles/group_interview_graphic_view_open_hardware_movement_part_2_technical_and_social_issues/">freesoftwaremagazine.com</a></li>
+      <li>RTX 4090 48 GB conversion — <a href="https://www.techpowerup.com/340880/nvidia-geforce-rtx-4090-gets-a-48-gb-mod-and-step-by-step-tutorial">techpowerup.com</a>, <a href="https://hothardware.com/news/geforce-rtx-4090-48gb-vram-mod">hothardware.com</a></li>
+      <li>RTX 2080 Ti 22 GB attempt — <a href="https://videocardz.com/newz/modded-geforce-rtx-2080-ti-supports-22gb-of-gddr6-memory">videocardz.com</a>, <a href="https://www.tweaktown.com/news/79273/uh-what-nvidia-geforce-rtx-2080-ti-can-support-22gb-gddr6-if-modded/index.html">tweaktown.com</a></li>
+      <li>3D Graphics Thingy post-mortem — <a href="https://www.bigmessowires.com/2013/09/11/son-of-3d-graphics-thingy-a-homebrew-graphics-processor/">bigmessowires.com</a></li>
+      <li>Vortex — <a href="https://github.com/vortexgpgpu/vortex">github.com/vortexgpgpu/vortex</a></li>
+      <li>Nyuzi — <a href="https://github.com/jbush001/NyuziProcessor">github.com/jbush001/NyuziProcessor</a></li>
+      <li>MIAOW — <a href="https://miaowgpu.org/">miaowgpu.org</a></li>
+      <li>FIFOgfx — <a href="https://github.com/MagerValp/fifogfx">github.com/MagerValp/fifogfx</a></li>
+      <li>PCI-SIG CEM connectors — <a href="https://pcisig.com/blog/evolution-cem-connectors-almost-20-years-making">pcisig.com</a>; specifications — <a href="https://pcisig.com/specifications">pcisig.com/specifications</a></li>
+      <li>JEDEC GDDR6 JESD250D — <a href="https://www.jedec.org/standards-documents/docs/jesd250d">jedec.org</a></li>
+      <li>Cadence, GDDR6 signal/power/thermal challenges — <a href="https://www.cadence.com/en_US/home/resources/white-papers/overcoming-signal-power-and-thermal-challenges-implementing-gddr6-interfaces-wp.html">cadence.com</a></li>
+      <li>AMD UG583, fly-by and clamshell topologies — <a href="https://docs.amd.com/r/en-US/ug583-ultrascale-pcb-design/Fly-by-and-Clamshell-Topologies">docs.amd.com</a></li>
+      <li>GamersNexus, Valve GPU board engineering — <a href="https://gamersnexus.net/news-pre-built-pc/valve-steam-machine-desktop-steamos-steam-frame-vr-controller-ft-engineering">gamersnexus.net</a></li>
+      <li>GamersNexus, Dell RTX 4090 teardown — <a href="https://gamersnexus.net/gpus/dell-made-impressive-rtx-4090-relatively-small-large-flow-through-good-cooling">gamersnexus.net</a></li>
+      <li>GamersNexus, Titan V teardown — <a href="https://gamersnexus.net/news-pc/3169-nvidia-titan-v-tear-down-pcb-bare-gpu">gamersnexus.net</a></li>
+      <li>TI, Multiphase 101 — <a href="https://www.ti.com/video/series/multiphase-101.html">ti.com</a></li>
+      <li>PCBWay capabilities, gold fingers, BGA assembly — <a href="https://www.pcbway.com/capabilities.html">pcbway.com</a>, <a href="https://www.pcbway.com/pcb_prototype/PCB_Gold_fingers.html">gold fingers</a></li>
+      <li>Sierra Circuits capabilities and PCB process — <a href="https://www.protoexpress.com/products/hdi-printed-circuit-boards/">protoexpress.com</a>, <a href="https://www.protoexpress.com/kb/pcb-manufacturing-overview/">manufacturing</a></li>
+      <li>Bay Area Circuits — <a href="https://bayareacircuits.com/pcb-capabilities/">bayareacircuits.com</a></li>
+      <li>Eurocircuits pools — <a href="https://www.eurocircuits.com/services/standard-pool/">eurocircuits.com</a></li>
+      <li>JLCPCB capabilities, gold fingers, assembly pricing — <a href="https://jlcpcb.com/capabilities/pcb-capabilities">jlcpcb.com</a>, <a href="https://jlcpcb.com/help/article/jlcpcb-gold-fingers">gold fingers</a></li>
+      <li>OSH Park 4-layer service — <a href="https://docs.oshpark.com/services/four-layer/">docs.oshpark.com</a></li>
+      <li>Micron GDDR6 and GDDR6X catalogues — <a href="https://www.micron.com/products/memory/graphics-memory/gddr6/part-catalog">micron.com</a></li>
+      <li>Joshi Repair published parts and reball prices — <a href="https://www.joshirepair.co.uk/product-page/gpu-repair-service">joshirepair.co.uk</a></li>
+      <li>Circuits Central BGA reballing — <a href="https://www.circuits-central.com/services-capabilities/bga-reballing-and-repair-services/">circuits-central.com</a>; reflow profile example — <a href="https://www.nextpcb.com/blog/smt-assembly-process">nextpcb.com</a></li>
+      <li>Underfill reliability review, 2025 — <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12389694/">pmc.ncbi.nlm.nih.gov</a></li>
+    </ol>
+  </div>
+
+  <div class="footer-note">
+    <strong>Building a GPU you can actually finish</strong> · research brief prepared for GPU Builder, October 2026. Companion to the interactive teaching guide and the custom memory-bank builder. Every figure in this document is attributed to a source above; where a source stated a limitation, the limitation is reproduced rather than smoothed over.
+  </div>
+</section>
+
+</main>
+</body>
+</html>
