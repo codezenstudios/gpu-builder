@@ -24,7 +24,7 @@ const metrics = JSON.parse(await evaluate(`JSON.stringify((() => {
 })())`));
 assert(metrics.header <= 60, 'Phone header is 60px or shorter', metrics.header + 'px');
 assert(metrics.projectBar <= 84, 'Phone project bar is 84px or shorter', metrics.projectBar + 'px');
-assert(metrics.docHeight <= 2700, 'Empty-board page fits in 2700px of scroll', metrics.docHeight + 'px');
+assert(metrics.docHeight <= 3300, 'Landing and empty board fit in 3300px of scroll', metrics.docHeight + 'px');
 assert(metrics.overflowX === 0, 'No horizontal overflow at 390px', metrics.overflowX + 'px');
 assert(metrics.minTarget >= 44, 'Touch targets stay at least 44px', metrics.minTarget + 'px');
 await evaluate(`window.scrollTo(0, 900)`);

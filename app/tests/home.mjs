@@ -1,0 +1,37 @@
+import {connect, wait} from './browser.mjs';
+const b = await connect();
+const {send, evaluate, navigate} = b;
+let failed = 0;
+const assert = (ok, label, detail = '') => {
+  console.log((ok ? 'PASS ' : 'FAIL ') + label + (detail ? ' — ' + detail : ''));
+  if (!ok) failed += 1;
+};
+await send('Emulation.setDeviceMetricsOverride', {width: 390, height: 844, deviceScaleFactor: 1, mobile: true});
+await navigate();
+const phone = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const imgs = [...document.querySelectorAll('.bench-gallery img')];
+  const first = imgs[0]?.getBoundingClientRect();
+  return {
+    intro: !!document.querySelector('.bench-intro'),
+    images: imgs.length,
+    loaded: imgs.filter((i) => i.complete && i.naturalWidth > 0).length,
+    firstWidth: Math.round(first?.width || 0),
+    twoUp: imgs.length > 1 && Math.abs(imgs[0].getBoundingClientRect().top - imgs[1].getBoundingClientRect().top) < 2,
+    overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+})())`));
+assert(phone.intro, 'Intro section renders above the workbench');
+assert(phone.images === 4, 'Gallery renders four photographs', phone.images + ' images');
+assert(phone.loaded === 4, 'All four photographs load', phone.loaded + ' loaded');
+assert(phone.twoUp, 'Phone gallery is a two-column grid', 'first width ' + phone.firstWidth + 'px');
+assert(phone.overflowX === 0, 'Gallery adds no horizontal overflow', phone.overflowX + 'px');
+await send('Emulation.setDeviceMetricsOverride', {width: 1440, height: 900, deviceScaleFactor: 1, mobile: false});
+await wait(200);
+const desktop = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const imgs = [...document.querySelectorAll('.bench-gallery img')];
+  return {fourUp: imgs.length === 4 && imgs.every((i) => Math.abs(i.getBoundingClientRect().top - imgs[0].getBoundingClientRect().top) < 2), overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth};
+})())`));
+assert(desktop.fourUp, 'Desktop gallery is a four-up row');
+assert(desktop.overflowX === 0, 'Gallery adds no horizontal overflow at 1440px', desktop.overflowX + 'px');
+b.close();
+process.exit(failed ? 1 : 0);
