@@ -38,6 +38,16 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Mobile compaction — October 24, 2026
+
+`app/tests/layout-mobile.mjs` pins the phone layout budgets at 390 × 844 with the empty board mounted, on the CDP session at port 9228:
+
+```bash
+node tests/layout-mobile.mjs
+```
+
+Measured after the change: header 58 px (budget ≤ 60), project bar 83 px (≤ 84), full page 2,676 px (≤ 2,700, down from 2,872), no horizontal overflow, smallest tracked touch target 44 px. After scrolling 900 px the board canvas sits at 0 px from the top of the viewport, so the guide and parts list scroll beneath a pinned board. The recorded `browser-checks.mjs` sweep still passes at 320, 360, 390, 430, 768, 820, 1024, 1280 and 1440 px with no browser exceptions or failed resources. Captures: `QA/phone-compact.png` and `QA/phone-board-pinned.png`.
+
 ## Limits
 
 Chromium viewport emulation is not physical-device or native Safari verification. No electrical, thermal or manufacturing correctness is asserted by the learning checks. There is no server-side project storage; use exported JSON for backups or transferring devices. The SQLite/contact/investor behavior of the unrelated Code Zen Studios site is outside this project.

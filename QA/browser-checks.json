@@ -280,22 +280,22 @@
       "page": 320,
       "canvas": {
         "x": 11,
-        "y": 254,
+        "y": 190,
         "width": 298,
         "height": 290,
-        "top": 254,
+        "top": 190,
         "right": 309,
-        "bottom": 544,
+        "bottom": 480,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 935.671875,
+        "y": 853.671875,
         "width": 298,
-        "height": 1474.03125,
-        "top": 935.671875,
+        "height": 1422.71875,
+        "top": 853.671875,
         "right": 309,
-        "bottom": 2409.703125,
+        "bottom": 2276.390625,
         "left": 11
       },
       "broken": 0
@@ -306,22 +306,22 @@
       "page": 360,
       "canvas": {
         "x": 11,
-        "y": 254,
+        "y": 190,
         "width": 338,
         "height": 290,
-        "top": 254,
+        "top": 190,
         "right": 349,
-        "bottom": 544,
+        "bottom": 480,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 912,
+        "y": 838.375,
         "width": 338,
-        "height": 1427.25,
-        "top": 912,
+        "height": 1385.65625,
+        "top": 838.375,
         "right": 349,
-        "bottom": 2339.25,
+        "bottom": 2224.03125,
         "left": 11
       },
       "broken": 0
@@ -332,22 +332,22 @@
       "page": 390,
       "canvas": {
         "x": 11,
-        "y": 254,
+        "y": 190,
         "width": 368,
         "height": 290,
-        "top": 254,
+        "top": 190,
         "right": 379,
-        "bottom": 544,
+        "bottom": 480,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 911,
+        "y": 841.375,
         "width": 368,
-        "height": 1368.59375,
-        "top": 911,
+        "height": 1308.1875,
+        "top": 841.375,
         "right": 379,
-        "bottom": 2279.59375,
+        "bottom": 2149.5625,
         "left": 11
       },
       "broken": 0
@@ -358,22 +358,22 @@
       "page": 430,
       "canvas": {
         "x": 11,
-        "y": 254,
+        "y": 190,
         "width": 408,
         "height": 290,
-        "top": 254,
+        "top": 190,
         "right": 419,
-        "bottom": 544,
+        "bottom": 480,
         "left": 11
       },
       "guide": {
         "x": 11,
-        "y": 863,
+        "y": 779.984375,
         "width": 408,
-        "height": 1356.21875,
-        "top": 863,
+        "height": 1258.75,
+        "top": 779.984375,
         "right": 419,
-        "bottom": 2219.21875,
+        "bottom": 2038.734375,
         "left": 11
       },
       "broken": 0
