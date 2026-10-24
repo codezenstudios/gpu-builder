@@ -44,6 +44,8 @@ await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [d
 await wait(180);
 const jumped = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);
 assert(jumped === 'Build the local memory interface.', 'Clicking a step opens that lesson', jumped);
+const rail = await evaluate(`document.querySelectorAll('.guide-progress span').length`);
+assert(rail === groups.length, 'The lesson progress rail matches the catalog', rail + ' segments');
 await evaluate(`(() => { const steps = document.querySelectorAll('#build-path [data-step]'); if (steps[14]) steps[14].click(); })()`);
 await wait(180);
 const mechanical = await evaluate(`document.querySelector('#guide-content h2').textContent.trim()`);

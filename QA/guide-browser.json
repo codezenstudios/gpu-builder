@@ -1,0 +1,84 @@
+{
+  "checks": [
+    {
+      "label": "Build guide opens as its own view",
+      "passed": true
+    },
+    {
+      "label": "Guide view is addressable by hash",
+      "passed": true
+    },
+    {
+      "label": "Guide prints every build step",
+      "passed": true
+    },
+    {
+      "label": "Guide lists every reference for sourcing",
+      "passed": true
+    },
+    {
+      "label": "Cover carries the project name",
+      "passed": true
+    },
+    {
+      "label": "Sourcing table names the supply classes",
+      "passed": true
+    },
+    {
+      "label": "Guide preview has no horizontal overflow at 390px",
+      "passed": true
+    },
+    {
+      "label": "Guide table keeps every row on a phone",
+      "passed": true
+    },
+    {
+      "label": "Printing hides the application chrome",
+      "passed": true
+    },
+    {
+      "label": "Printing keeps the document and drops its toolbar",
+      "passed": true
+    },
+    {
+      "label": "Printing names the document after the project",
+      "passed": true
+    },
+    {
+      "label": "The page title is restored after printing",
+      "passed": true
+    },
+    {
+      "label": "Print produces a multi-page PDF (11 pages, 393 KB)",
+      "passed": true
+    },
+    {
+      "label": "Screen styles return after print emulation",
+      "passed": true
+    },
+    {
+      "label": "Back returns to the workbench",
+      "passed": true
+    },
+    {
+      "label": "The BOM tab exports the guide too",
+      "passed": true
+    },
+    {
+      "label": "Footer button opens the guide as well",
+      "passed": true
+    },
+    {
+      "label": "Hash navigation leaves the guide",
+      "passed": true
+    },
+    {
+      "label": "Printing from the workbench still prints the guide",
+      "passed": true
+    }
+  ],
+  "pages": 11,
+  "bytes": 402753,
+  "errors": [],
+  "failed": []
+}

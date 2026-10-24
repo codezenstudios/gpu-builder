@@ -38,6 +38,16 @@ node tests/browser-files.mjs
 
 Use an isolated browser profile: the workflow suite clears that profile's GPU Builder localStorage. The scripts target localhost:4180 and never write to an external website.
 
+## Phase 4 printable build guide — October 24, 2026
+
+`tests/guide.test.mjs` (four tests) builds the document in Node: all 22 steps and 47 references are present, sourcing classes sum to 23 hardware · 17 distributor · 2 fabrication · 5 integrated, a project name containing markup is escaped, installed references are marked, every step repeats its check question and correct answer, and each part kind carries sourcing advice.
+
+`tests/guide-browser.mjs` (seventeen assertions, CDP on 9228): the guide opens from the landing button, the footer and `#build-guide`; it renders 22 steps and 47 sourcing rows with the project name on the cover; the preview has no horizontal overflow at 390 px; print emulation hides the header, workbench and toolbar while keeping the document; `Page.printToPDF` produces an 11-page, 393 KB A4 PDF, saved as `QA/gpu-builder-build-guide.pdf`; the document title becomes “<project> — build guide” for the print dialog and is restored afterwards; Back and hash navigation return to the workbench; printing from the workbench with the guide closed still prints the whole guide. `npm test` runs 20 tests, all passing.
+
+Verification found one real defect: the guide's `.guide-step` class collided with the lesson progress rail, so the rail was renamed `.guide-progress` (and `home.mjs` now checks its 22 segments). The phone table rules were also scoped to `screen`, because A4 print width falls inside the phone breakpoint and had been stacking the printed table into twelve pages.
+
+Captures: `QA/guide-preview.png`, `QA/guide-phone.png` and `QA/gpu-builder-build-guide.pdf`.
+
 ## Phase 3 full parts — October 24, 2026
 
 Model coverage (`tests/model.test.mjs`, eight tests, 16 with the custom suite): 22 lessons and 47 assemblies in build order — standoffs, thermal pads, paste, heatsink, three fans, backplate, bracket and cable; new thermal and cooling checks; quantities from the catalog (decoupling bank 8, everything else 1) in the BOM CSV; a saved v1 project upgrading instead of throwing, keeping the 24 placements whose prerequisites still hold and dropping the old heatsink and fan.
@@ -74,4 +84,4 @@ Measured after the change: header 58 px (budget ≤ 60), project bar 83 px (≤ 
 
 ## Limits
 
-Chromium viewport emulation is not physical-device or native Safari verification. No electrical, thermal or manufacturing correctness is asserted by the learning checks. There is no server-side project storage; use exported JSON for backups or transferring devices. The SQLite/contact/investor behavior of the unrelated Code Zen Studios site is outside this project.
+PDF output depends on the browser print dialog; page breaks are held per step, but a different print engine may paginate differently. Sourcing notes are guidance, not a procurement list, and no prices, availability or vendor part numbers are claimed. Chromium viewport emulation is not physical-device or native Safari verification. No electrical, thermal or manufacturing correctness is asserted by the learning checks. There is no server-side project storage; use exported JSON for backups or transferring devices. The SQLite/contact/investor behavior of the unrelated Code Zen Studios site is outside this project.

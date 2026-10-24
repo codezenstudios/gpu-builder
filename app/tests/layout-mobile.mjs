@@ -40,6 +40,21 @@ const edges = JSON.parse(await evaluate(`JSON.stringify((() => {
   return {footerLeft: Math.round(footer.left), footerRight: Math.round(footer.right), cardLeft: Math.round(card.left), cardRight: Math.round(card.right)};
 })())`));
 assert(edges.footerLeft >= edges.cardLeft && edges.footerRight <= edges.cardRight, 'Library footer stays inside the workbench card', `footer ${edges.footerLeft}-${edges.footerRight}, card ${edges.cardLeft}-${edges.cardRight}`);
+await evaluate(`document.querySelector('[data-tab="bom"]').click()`);
+await wait(180);
+const bom = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const bar = document.querySelector('.bom-toolbar');
+  return {
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    barOverflow: bar.scrollWidth - bar.clientWidth,
+    buttons: bar.querySelectorAll('.button').length,
+    rows: document.querySelectorAll('.bom-table tbody tr').length
+  };
+})())`));
+assert(bom.overflow === 0 && bom.barOverflow <= 1, 'BOM toolbar wraps inside the phone width', `bar ${bom.barOverflow}px, page ${bom.overflow}px`);
+assert(bom.buttons === 2 && bom.rows === 47, 'BOM offers the guide and CSV actions for all 47 references', `${bom.buttons} buttons, ${bom.rows} rows`);
+await evaluate(`document.querySelector('[data-tab="overview"]').click()`);
+await wait(150);
 await evaluate(`window.scrollTo(0, 0)`);
 await wait(120);
 await evaluate(`document.querySelector('.part-card').focus()`);

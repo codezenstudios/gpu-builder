@@ -1,5 +1,9 @@
 # Change log
 
+## Phase 4 printable build guide — October 24, 2026
+
+Added a build-guide view, reachable from the landing actions, the footer and `#build-guide`, that prints or saves to PDF as an eleven-page A4 document: a cover with generation date, placement and quiz counts and safety notes; a sourcing table for all 47 references sorted into hardware, distributor, fabrication and integrated supply, each with what to buy; and 22 numbered steps carrying what the part does, where it goes, what to watch for, a self-check question with its answer and a reference. Printing from anywhere in the app prints the guide, and the document title follows the project so a saved PDF is named after the build. Verification in [[Testing]].
+
 ## Phase 3 full parts — October 24, 2026
 
 Made the teaching build a complete card instead of a board with a cooler on top. Appended eight lessons in real build order — corner standoffs, five thermal pads, thermal paste, heatsink, three cooler fans, backplate with four spring screws, PCIe bracket with two screws, and the auxiliary power cable — for 22 lessons and 47 assemblies. Each new part has a reference designator, a quiz, a category and its own board artwork; pads and paste draw under the heatsink, the backplate behind the PCB, and hardware above the stack. The BOM now reports catalog quantities. Projects saved in the old format upgrade on load, keeping every placement whose prerequisites still hold. Verification in [[Testing]].
