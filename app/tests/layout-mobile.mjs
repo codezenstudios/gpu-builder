@@ -34,5 +34,35 @@ const stuck = JSON.parse(await evaluate(`JSON.stringify((() => {
   return {top: Math.round(r.top), scrollY: Math.round(window.scrollY)};
 })())`));
 assert(stuck.scrollY > 600 && stuck.top >= 0 && stuck.top <= 24, 'Board stays pinned while the guide scrolls', `top ${stuck.top}px at ${stuck.scrollY}px`);
+const edges = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const footer = document.querySelector('.library-footer').getBoundingClientRect();
+  const card = document.querySelector('.workbench').getBoundingClientRect();
+  return {footerLeft: Math.round(footer.left), footerRight: Math.round(footer.right), cardLeft: Math.round(card.left), cardRight: Math.round(card.right)};
+})())`));
+assert(edges.footerLeft >= edges.cardLeft && edges.footerRight <= edges.cardRight, 'Library footer stays inside the workbench card', `footer ${edges.footerLeft}-${edges.footerRight}, card ${edges.cardLeft}-${edges.cardRight}`);
+await evaluate(`window.scrollTo(0, 0)`);
+await wait(120);
+await evaluate(`document.querySelector('.part-card').focus()`);
+await wait(220);
+const focused = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const card = document.querySelector('.part-card').getBoundingClientRect();
+  const board = document.querySelector('.canvas-frame').getBoundingClientRect();
+  return {cardTop: Math.round(card.top), cardBottom: Math.round(card.bottom), boardBottom: Math.round(board.bottom), viewport: innerHeight};
+})())`));
+assert(focused.cardTop >= focused.boardBottom - 2 && focused.cardBottom <= focused.viewport, 'Focused part card is not hidden under the pinned board', `card ${focused.cardTop}-${focused.cardBottom}, board bottom ${focused.boardBottom}`);
+await evaluate(`(() => {
+  const card = document.querySelectorAll('.part-card')[6];
+  const top = card.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo(0, Math.round(top + 60));
+})()`);
+await wait(150);
+await evaluate(`document.querySelectorAll('.part-card')[6].focus()`);
+await wait(220);
+const tabbed = JSON.parse(await evaluate(`JSON.stringify((() => {
+  const card = document.querySelectorAll('.part-card')[6].getBoundingClientRect();
+  const board = document.querySelector('.canvas-frame').getBoundingClientRect();
+  return {cardTop: Math.round(card.top), boardBottom: Math.round(board.bottom)};
+})())`));
+assert(tabbed.cardTop >= tabbed.boardBottom - 2, 'Tab focus below the pinned board is not hidden behind it', `card top ${tabbed.cardTop}, board bottom ${tabbed.boardBottom}`);
 b.close();
 process.exit(failed ? 1 : 0);
